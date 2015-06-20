@@ -1,9 +1,9 @@
 ##Open Ephyra
 
-Open Ephyra is an open-source framework for question answering
+Open Ephyra is an open source framework for question answering
 developed at Carnegie Mellon.
 
-Two versions of Open Ephyra are included in ClarityEco, both which use
+Two versions of Open Ephyra are included in ClarityEco, both of which use
 Apache Thrift for remote procedure calls. The version in this directory
 is a stand-alone service for use in any application.
 
