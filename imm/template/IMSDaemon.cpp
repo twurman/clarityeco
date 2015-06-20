@@ -40,54 +40,45 @@ using namespace apache::thrift::concurrency;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::server;
-using namespace cmdcenterstubs;
 
 // define the constant
 #define THREAD_WORKS 16
 
 class ImageMatchingServiceHandler : public ImageMatchingServiceIf {
-	public:
-		// put the model training here so that it only needs to
-		// be trained once
-		ImageMatchingServiceHandler(){
-			this->matcher = new FlannBasedMatcher();
-			cout << "building the image matching model..." << endl;
-			build_model(this->matcher, &(this->trainImgs));
-		}
-		
-		void match_img(string &response, const string &image){
-			gettimeofday(&tp, NULL);
-			long int timestamp = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-			string image_path = "input-" + to_string(timestamp) + ".jpg";
-			ofstream imagefile(image_path.c_str(), ios::binary);
-			imagefile.write(image.c_str(), image.size());
-			imagefile.close();
-			response = exec_match(image_path, this->matcher, &(this->trainImgs));
-		}
+public:
+	// put the model training here so that it only needs to
+	// be trained once
+	ImageMatchingServiceHandler(){
+		this->matcher = new FlannBasedMatcher();
+		cout << "building the image matching model..." << endl;
+		build_model(this->matcher, &(this->trainImgs));
+	}
+	
+	void match_img(string &response, const string &image){
+		gettimeofday(&tp, NULL);
+		long int timestamp = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+		string image_path = "input-" + to_string(timestamp) + ".jpg";
+		ofstream imagefile(image_path.c_str(), ios::binary);
+		imagefile.write(image.c_str(), image.size());
+		imagefile.close();
+		response = exec_match(image_path, this->matcher, &(this->trainImgs));
+	}
 
-		void ping() {
-			cout << "pinged" << endl;
-		}
-	private:
-		struct timeval tp;
-		DescriptorMatcher *matcher;
-		vector<string> trainImgs;
+	void ping() {
+		cout << "pinged" << endl;
+	}
+private:
+	struct timeval tp;
+	DescriptorMatcher *matcher;
+	vector<string> trainImgs;
 };
 
 int main(int argc, char **argv){
 	int port = 9082;
-	//Register with the command center 
-	int cmdcenterport = 8081;
 	if (argv[1]) {
 	port = atoi(argv[1]);
 	} else {
 	std::cout << "Using default port for imm..." << std::endl;
-	}
-
-	if (argv[2]) {
-	cmdcenterport = atoi(argv[2]);
-	} else {
-	std::cout << "Using default port for cc..." << std::endl;
 	}
 
 	// initial the transport factory
