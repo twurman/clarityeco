@@ -21,7 +21,7 @@
 #include <cstdlib> //07-12-15 for arg passing
 
 #include "gen-cpp/KaldiService.h"
-#include "subproc.h"
+#include "../common/subproc.h"
 //#include "CommandCenter.h"
 //#include "commandcenter_types.h"
 #include "/home/momo/Research/sirius/sirius-application/command-center/gen-cpp/CommandCenter.h"
