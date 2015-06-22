@@ -3,6 +3,8 @@
 
 Kaldi has been wraped in RPC framework using [Apache Thrift](http://thrift.apache.org/). 
 
+Two Versions of Open Ephyra are included in ClarityEco, both of which use Apache Thrift for remote procedure calls. The version in this directory is a stand-alone service for use in any application
+
 ###Basic Setup###
 
 ```

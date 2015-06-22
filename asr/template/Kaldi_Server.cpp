@@ -177,38 +177,7 @@ int main(int argc, char **argv) {
 	
 
 	int port = 9090;
-	//Register with the command center 
-	int cmdcenterport = 8081;
-	if (argv[1])
-	{
-		port = atoi(argv[1]);
-	}
-	else
-	{
-		std::cout << "Using default port for asr..." << std::endl;
-	}
 
-	if (argv[2])
-	{
-		cmdcenterport = atoi(argv[2]);
-	}
-	else
-	{
-		std::cout << "Using default port for cc..." << std::endl;
-	}
-
-	boost::shared_ptr<TTransport> cmdsocket(new TSocket("localhost", cmdcenterport));
-	boost::shared_ptr<TTransport> cmdtransport(new TBufferedTransport(cmdsocket));
-	boost::shared_ptr<TProtocol> cmdprotocol(new TBinaryProtocol(cmdtransport));
-	CommandCenterClient cmdclient(cmdprotocol);
-	cmdtransport->open();	
-	std::cout << "Registering automatic speech recognition server with command center..."<<std::endl;
-	MachineData mDataObj;
-	mDataObj.name="localhost";
-	mDataObj.port=port;
-	cmdclient.registerService("ASR", mDataObj);
-	cmdtransport->close();
-	
 	shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
   shared_ptr<TProcessor> processor(new KaldiServiceProcessor(handler));
   shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
