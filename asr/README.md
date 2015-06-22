@@ -3,37 +3,30 @@
 
 Kaldi has been wraped in RPC framework using [Apache Thrift](http://thrift.apache.org/). 
 
-Kaldi directory contains several files and folder:
+`asr/` directory contains several files and folder:
 ```
-kaldi-thrift/
-scripts/
-src.tar.gz
-tools.tar.gz
-
-```
-`kaldi-thrift/` contains the Thrift components
-
-`scripts/`			contains scripts
-
-`src.tar.gz`		contains source code in a tar file
-
-`tools.tar.gz`		contains tools for Kaldi in a tar file
-
-###Basic Setup###
-
-
+common/
+sirius/
+template/
 
 ```
-$ make thrift
-$ make 
+`common/` 		Contains the actual Kaldi package and scripts, with some modifications
+
+`sirius/`		Contains an Kaldi Wrapper that communicates with the Sirius Command Centre
+
+`template/`		Contains a stand-alone Kaldi wrapper for use in any application
+
+###Basic Setup Before Startup###
+
+Some preliminary steps are need before running kaldi in either `sirius/` folder or `template/` folder
+
+```
+$ cd common/scripts/
+$ sudo ./prepare.sh
+$ ./compile-kaldi.sh
 ```
 
-Open a second terminal to this same location.
-
-In the first one, start up the serve with this command:
-
-`$ ./server`
-
-In the second one, run the client with a .wav file:
-
-`$ ./client ../../../inputs/questions/what.is.the.speed.of.light.wav`
+###NOTES###
+1. Make sure to resolve any extra dependencies that may appear before compiling kaldi with `compile-kaldi.sh`
+2. Error with Openfst may appear when compiling, to resolve go to the `tools/` and type `make` and then try compiling again with `compile-kaldi.sh`
+3. Please refer to the `INSTALL` file in `tools/` file after tools.tar.gz  

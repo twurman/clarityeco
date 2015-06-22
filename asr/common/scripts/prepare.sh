@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
+# run as sudo
 
 # Download and prepare online decoding
 # Yiping Kang
 # ypkang@umich.edu 2014
+
+# Download Dependencies for clairtyeco(ported from get-dependencies)
+# Moeiz Riaz
+# moeizr@umich.edu 2015
 
 # Download model and other related files from kaldi-asr.org
 cd ../
@@ -24,6 +29,27 @@ for x in nnet_a_gpu_online/conf/*conf; do
   cp $x $x.orig
   sed s:/export/a09/dpovey/kaldi-clean/egs/fisher_english/s5/exp/nnet2_online/:$(pwd)/: < $x.orig > $x
 done
+
+echo "Downloading and installing Dependencies for Kaldi"
+
+# Add additional repositories (ffmpeg)
+add-apt-repository ppa:kirillshkrogalev/ffmpeg-next
+
+# Enable multiverse sources (libfaac-dev)
+apt-add-repository multiverse
+
+# Update sources and install basics
+apt-get update
+apt-get -y install \
+  git zip unzip subversion sox \
+  default-jdk ant automake autoconf libtool bison libboost-all-dev ffmpeg \
+  swig python-pip curl
+
+# Get ATLAS library for Kaldi
+apt-get -y \
+	install libatlas-dev libatlas-base-dev
+
+echo "Done with Dependencies"
 
 echo "Download a single wav file for test purpose"
 # Download a single wav file to demo the decoding
