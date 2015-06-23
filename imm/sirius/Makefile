@@ -1,6 +1,5 @@
 CXX = g++
 PROTO = protoc
-PROTO_FLAGS = --cpp_out=.
 # Needed for linking
 BOOST_LOCATION = /usr/local/boost_1_58_0
 BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
@@ -47,7 +46,7 @@ COMMON_DIR = ../common/
 # need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
 # all: $(TARGET_SERVER) $(TARGET_CLIENT)
 all:
-	$(PROTO) $(wildcard $(COMMON_DIR)/*.proto) $(PROTO_FLAGS)
+	$(PROTO) $(wildcard $(COMMON_DIR)/*.proto) --cpp_out=$(COMMON_DIR)
 	$(TARGET_SERVER)
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
