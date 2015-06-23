@@ -24,12 +24,8 @@ LINK_FLAGS = -L/usr/local/boost_1_58_0/stage/lib \
 TARGET_CLIENT = imclient 
 TARGET_SERVER = imserver
 
-CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
-                  $(HOME)/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.o
-# CMDOBJECT_SERVER = CommandCenter.o commandcenter_types.o
 OBJECTS_CLIENT = ./gen-cpp/ImageMatchingService.o IMSClient.o 
-OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
-					./gen-cpp/ImageMatchingService.o \
+OBJECTS_SERVER = ./gen-cpp/ImageMatchingService.o \
 					../common/detect.o \
 					../common/kp_protobuf.o \
 					../common/keypoints.pb.cc \
@@ -37,7 +33,6 @@ OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 					IMSDaemon.o
 
 # Needed for finding header files during preprocessing
-CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common/
 
