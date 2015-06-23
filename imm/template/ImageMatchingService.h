@@ -8,7 +8,7 @@
 #define ImageMatchingService_H
 
 #include <thrift/TDispatchProcessor.h>
-#include "service_types.h"
+#include "gen-cpp/service_types.h"
 
 
 
