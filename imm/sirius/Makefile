@@ -46,13 +46,18 @@ proto:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
- 	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
+ 	$(CXX) $(CXX_FLAGS) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
+
+common:
+	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(COMMON_DIR)/detect.cpp -o $(COMMON_DIR)/detect.o
+	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(COMMON_DIR)/kp_protobuf.cpp -o $(COMMON_DIR)/kp_protobuf.o
 
 %.o: %.cpp
 	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
-all: proto
-	%.o
+all: 
+	proto
+	common
 	$(TARGET_SERVER)
 
 clean:
