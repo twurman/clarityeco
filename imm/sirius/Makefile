@@ -46,7 +46,8 @@ COMMON_DIR = ../common
 # need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
 # all: $(TARGET_SERVER) $(TARGET_CLIENT)
 all:
-	$(PROTO) $(wildcard $(COMMON_DIR)/*.proto) --cpp_out=$(COMMON_DIR)
+	$(PROTO) --proto_path=$(COMMON_DIR)/keypoints.proto --cpp_out=$(COMMON_DIR)
+	$(PROTO) --proto_path=$(COMMON_DIR)/store_mat.proto --cpp_out=$(COMMON_DIR)
 	$(TARGET_SERVER)
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
