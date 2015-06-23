@@ -41,7 +41,7 @@ OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 # Needed for finding header files during preprocessing
 CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
-COMMON_DIR = ../common/
+COMMON_DIR = ../common
 
 # need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
 # all: $(TARGET_SERVER) $(TARGET_CLIENT)
