@@ -60,8 +60,8 @@ public class QADaemon {
 		try {
 			// Start the question-answer server
 			TServerTransport serverTransport = new TServerSocket(port);
-			//TServer server = new TSimpleServer(new Args(serverTransport).processor(processor));
-			TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+			TServer server = new TSimpleServer(new Args(serverTransport).processor(processor));
+			//TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 			
 			Thread t1 = new Thread(new Runnable() {
 			    public void run() {

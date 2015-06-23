@@ -319,7 +319,7 @@ public class OpenEphyra {
 		// query generation
 		MsgPrinter.printGeneratingQueries();
 		Query[] queries = QueryGeneration.getQueries(aq);
-		/*
+		
 		// search
 		MsgPrinter.printSearching();
 		Result[] results = Search.doSearch(queries);
@@ -327,9 +327,9 @@ public class OpenEphyra {
 		// answer selection
 		MsgPrinter.printSelectingAnswers();
 		results = AnswerSelection.getResults(results, maxAnswers, absThresh);
-		*/
-		Result[] results = new Result[maxAnswers];
-		results[0] = new Result("hello from runPipeline()");
+		
+		//Result[] results = new Result[maxAnswers];
+		//results[0] = new Result("hello from runPipeline()");
 		return results;
 	}
 	
