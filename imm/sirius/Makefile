@@ -55,10 +55,7 @@ common:
 %.o: %.cpp
 	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
-all: 
-	$(MAKE) proto
-	$(MAKE) common
-	$(MAKE) $(TARGET_SERVER)
+all: $(TARGET_SERVER)
 
 clean:
 	rm -rf $(TARGET_SERVER) *.o
