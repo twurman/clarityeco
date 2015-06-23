@@ -42,16 +42,18 @@ CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common
 
-all:
+proto:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
-	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(wildcard $(COMMON_DIR)/*.cpp) $(wildcard ./*.cpp) -o $@
-	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
 
-# $(TARGET_SERVER): $(OBJECTS_SERVER)
-# 	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
+$(TARGET_SERVER): $(OBJECTS_SERVER)
+ 	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
 
-# %.o: %.cpp
-# 	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+%.o: %.cpp
+	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+
+all: proto
+	%.o
+	$(TARGET_SERVER)
 
 clean:
 	rm -rf $(TARGET_SERVER) *.o
