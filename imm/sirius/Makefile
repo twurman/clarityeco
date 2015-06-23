@@ -1,8 +1,12 @@
 CXX = g++
 PROTO = protoc
-CXX_FLAGS = -I/usr/local/boost_1_58_0
+PROTO_FLAGS = --cpp_out=.
+# Needed for linking
+BOOST_LOCATION = /usr/local/boost_1_58_0
+BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
+CXX_FLAGS = -I$(BOOST_LOCATION)
 
-LINK_FLAGS = -L/usr/local/boost_1_58_0/stage/lib \
+LINK_FLAGS = -L$(BOOST_LIB) \
 					-lopencv_core \
 					-lopencv_highgui \
 					-lopencv_imgproc \
@@ -20,8 +24,7 @@ LINK_FLAGS = -L/usr/local/boost_1_58_0/stage/lib \
 					-lprotobuf \
 					-ltesseract \
 					-lthrift
-
-# TARGET_CLIENT = imclient 
+ 
 TARGET_SERVER = imserver
 
 CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
@@ -41,13 +44,11 @@ CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common/
 
-# Needed for linking
-BOOST_LOCATION = /usr/local/boost_1_58_0
-BOOST_LIB = -L/usr/local/lib
-
 # need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
 # all: $(TARGET_SERVER) $(TARGET_CLIENT)
-all: $(TARGET_SERVER)
+all:
+	$(PROTO) $(wildcard $(COMMON_DIR)/*.proto) $(PROTO_FLAGS)
+	$(TARGET_SERVER)
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
 	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(BOOST_LIB) $(LINK_FLAGS)
