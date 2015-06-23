@@ -11,8 +11,8 @@
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TTransportUtils.h>
-
-#include "ImageMatchingService.h"
+ 
+#include "gen-cpp/ImageMatchingService.h"
 
 using namespace std;
 using namespace apache::thrift;
@@ -20,31 +20,40 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
 int main(int argc, char** argv) {
-	boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9082));
+	int port = 9082;
+	string imagePath;
+	
+	if (argv[1]) {
+		port = atoi(argv[1]);
+	} else {
+		cout << "Using default port for imm..." << endl;
+	} 
+
+	if(argv[2]) {
+		imagePath = argv[2];
+	} else {
+		cerr << "Usage: ./client <imm_port> <path_to_image>" << endl;
+		return -1;
+	}
+
+	boost::shared_ptr<TTransport> socket(new TSocket("localhost", port));
 	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
 	boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
 	ImageMatchingServiceClient client(protocol);
 	
 	struct timeval tv1, tv2;
 	try{
-		ifstream fin("test.jpg", ios::binary);
+		ifstream fin(imagePath.c_str(), ios::binary);
 		ostringstream ostrm;
-                ostrm << fin.rdbuf();
+		ostrm << fin.rdbuf();
 		string image(ostrm.str());
-		if (!fin) std::cerr << "Could not open the file!" << std::endl;
+		if (!fin) cerr << "Could not open the file!" << endl;
 
 		transport->open();
 		string response;
-
-		gettimeofday(&tv1, NULL);
-		client.match_img(response, image);
-		gettimeofday(&tv2, NULL);
-		unsigned int query_latency = (tv2.tv_sec - tv1.tv_sec) * 1000000 + (tv2.tv_usec - tv1.tv_usec);		
-
-		 cout << "client send the image successfully..." << endl;
-		 cout << response << endl;
-		// cout << "answer replied within " << fixed << setprecision(2) << (double)query_latency / 1000 << " ms" << endl;
-		cout << fixed << setprecision(2) << (double)query_latency / 1000 << endl;
+		client.match_img(response, image);	
+		cout << "client sent the image successfully..." << endl;
+		cout << response << endl;
 		
 		transport->close();
 	}catch(TException &tx){

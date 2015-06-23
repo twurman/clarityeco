@@ -1,9 +1,3 @@
-/*
- *
- *
- *
- */
-
 // import the thrift headers
 #include <thrift/concurrency/ThreadManager.h>
 #include <thrift/concurrency/PosixThreadFactory.h>
@@ -30,7 +24,7 @@
 #include <boost/bind.hpp>
 
 // import the service headers
-#include "ImageMatchingService.h"
+#include "gen-cpp/ImageMatchingService.h"
 #include "../common/detect.h"
 
 // define the namespace
@@ -76,31 +70,31 @@ private:
 int main(int argc, char **argv){
 	int port = 9082;
 	if (argv[1]) {
-	port = atoi(argv[1]);
+		port = atoi(argv[1]);
 	} else {
-	std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
-	// initial the transport factory
+	// initialize the transport factory
 	boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
 	boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-	// initial the protocal factory
+	// initialize the protocal factory
 	boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-	// initial the request handler
+	// initialize the request handler
 	boost::shared_ptr<ImageMatchingServiceHandler> handler(new ImageMatchingServiceHandler());
-	// initial the processor
+	// initialize the processor
 	boost::shared_ptr<TProcessor> processor(new ImageMatchingServiceProcessor(handler));
-	// initial the thread manager and factory
+	// initialize the thread manager and factory
 	boost::shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(THREAD_WORKS);
 	boost::shared_ptr<PosixThreadFactory> threadFactory = boost::shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
 	threadManager->threadFactory(threadFactory);
 	threadManager->start();
 
-	// initial the image matching server
+	// initialize the image matching server
 	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
 
-	cout << "Starting the image matching server..." << endl;
+	cout << "Starting the image matching server on port " << port << endl;
 	server.serve();
-	cout << "Done..." << endl;
+
 	return 0;
 }
