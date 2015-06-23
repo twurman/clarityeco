@@ -29,7 +29,6 @@ TARGET_SERVER = imserver
 CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
                   $(HOME)/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.o
 # CMDOBJECT_SERVER = CommandCenter.o commandcenter_types.o
-# OBJECTS_CLIENT = ./gen-cpp/ImageMatchingService.o IMSClient.o 
 OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 					./gen-cpp/ImageMatchingService.o \
 					../common/detect.o \
@@ -43,17 +42,9 @@ CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common
 
-# need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
-# all: $(TARGET_SERVER) $(TARGET_CLIENT)
 all:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
 	$(TARGET_SERVER)
-
-proto:
-
-
-$(TARGET_CLIENT): $(OBJECTS_CLIENT)
-	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(BOOST_LIB) $(LINK_FLAGS)
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
@@ -62,6 +53,6 @@ $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
-	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) *.o
+	rm -rf $(TARGET_SERVER) *.o
 
 .PHONY:	all
