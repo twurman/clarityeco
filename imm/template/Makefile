@@ -1,8 +1,11 @@
 CXX = g++
 PROTO = protoc
-CXX_FLAGS = -I/usr/local/boost_1_58_0
+# Needed for linking
+BOOST_LOCATION = /usr/local/boost_1_58_0
+BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
+CXX_FLAGS = -I$(BOOST_LOCATION)
 
-LINK_FLAGS = -L/usr/local/boost_1_58_0/stage/lib \
+LINK_FLAGS = -L$(BOOST_LIB) \
 					-lopencv_core \
 					-lopencv_highgui \
 					-lopencv_imgproc \
@@ -20,7 +23,7 @@ LINK_FLAGS = -L/usr/local/boost_1_58_0/stage/lib \
 					-lprotobuf \
 					-ltesseract \
 					-lthrift
-
+ 
 TARGET_CLIENT = imclient 
 TARGET_SERVER = imserver
 
@@ -34,26 +37,27 @@ OBJECTS_SERVER = ./gen-cpp/ImageMatchingService.o \
 
 # Needed for finding header files during preprocessing
 GEN_DIR = ./gen-cpp
-COMMON_DIR = ../common/
+COMMON_DIR = ../common
 
-# Needed for linking
-BOOST_LOCATION = /usr/local/boost_1_58_0
-BOOST_LIB = -L/usr/local/lib
-
-# need to compile proto first --> protoc <file>.proto --cpp_out=<dir>
-all: $(TARGET_SERVER) $(TARGET_CLIENT)
-# all: $(TARGET_SERVER)
+proto:
+	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
-	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(BOOST_LIB) $(LINK_FLAGS)
+	$(CXX) $(CXX_FLAGS) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LINK_FLAGS)
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
-	$(CXX) -I $(BOOST_LOCATION) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(BOOST_LIB) $(LINK_FLAGS)
+	$(CXX) $(CXX_FLAGS) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
+
+common:
+	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(COMMON_DIR)/detect.cpp -o $(COMMON_DIR)/detect.o
+	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(COMMON_DIR)/kp_protobuf.cpp -o $(COMMON_DIR)/kp_protobuf.o
 
 %.o: %.cpp
 	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
+all: proto common $(TARGET_SERVER) $(TARGET_CLIENT)
+
 clean:
-	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) *.o
+	rm -rf $(TARGET_SERVER) *.o
 
 .PHONY:	all
