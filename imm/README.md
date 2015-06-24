@@ -1,10 +1,11 @@
 ###To compile:
-In common/ run 
+
+For sirius version, in sirius/ run
 ```
-protoc <file>.proto --cpp_out=.
+make all
 ```
 
-In sirius/ or template/ run
+For example version, in template/ run 
 ```
 make
 ```
