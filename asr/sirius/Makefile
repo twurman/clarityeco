@@ -22,7 +22,7 @@ $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(FLAGS) -I$(CC_DIR) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 %.o: %.cpp
-	$(CXX) $(FLAGS) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+	$(CXX) $(FLAGS) -I$(CC_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
 	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) gen-cpp *.o *~
