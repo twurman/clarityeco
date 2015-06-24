@@ -31,10 +31,10 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
-using namespace apache::thrift;
-using namespace apache::thrift::protocol;
-using namespace apache::thrift::transport;
-using namespace apache::thrift::server;
+using namespace ::apache::thrift;
+using namespace ::apache::thrift::protocol;
+using namespace ::apache::thrift::transport;
+using namespace ::apache::thrift::server;
 using boost::shared_ptr;
 using namespace cmdcenterstubs;
 
