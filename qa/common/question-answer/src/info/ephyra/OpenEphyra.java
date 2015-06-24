@@ -254,7 +254,6 @@ public class OpenEphyra {
 	 * Initializes the pipeline for factoid questions.
 	 */
 	protected void initFactoid() {
-		System.out.println("OpenEphyra.java: initFactoid()");
 		// question analysis
 		Ontology wordNet = new WordNet();
 		// - dictionaries for term extraction
@@ -314,7 +313,7 @@ public class OpenEphyra {
 	 * @param absThresh absolute threshold for scores
 	 * @return array of results
 	 */
-	protected synchronized Result[] runPipeline(AnalyzedQuestion aq, int maxAnswers,
+	protected Result[] runPipeline(AnalyzedQuestion aq, int maxAnswers,
 								  float absThresh) {
 		// query generation
 		MsgPrinter.printGeneratingQueries();
@@ -328,8 +327,6 @@ public class OpenEphyra {
 		MsgPrinter.printSelectingAnswers();
 		results = AnswerSelection.getResults(results, maxAnswers, absThresh);
 		
-		//Result[] results = new Result[maxAnswers];
-		//results[0] = new Result("hello from runPipeline()");
 		return results;
 	}
 	
@@ -407,17 +404,15 @@ public class OpenEphyra {
 	public Result[] askFactoid(String question, int maxAnswers,
 							   float absThresh) {
 		// initialize pipeline
-		// CHANGED BY BEN TOLL 06/09/15: make this threadsafe
-		// and appropriate for use with thrift question-answer handler
-		// initFactoid();
+		initFactoid();
+		
 		// analyze question
 		MsgPrinter.printAnalyzingQuestion();
 		AnalyzedQuestion aq = QuestionAnalysis.analyze(question);
+		
+		// get answers
 		Result[] results = runPipeline(aq, maxAnswers, absThresh);
-		// DEBUGGING
-		/*Result[] results = new Result[maxAnswers];
-		results[0] = new Result("42");
-		*/
+		
 		return results;
 	}
 	

@@ -48,8 +48,6 @@ public class QueryGeneration {
 		// apply query generators
 		for (QueryGenerator queryGenerator : queryGenerators) {
 			Query[] queries = queryGenerator.generateQueries(aq);
-			//Query[] queries = new Query[1];
-			//queries[0] = new Query("hello world from getQueries!");
 			for (Query query : queries) results.add(query);
 		}
 		

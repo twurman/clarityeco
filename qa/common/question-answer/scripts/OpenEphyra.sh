@@ -11,8 +11,8 @@ export CLASSPATH=bin:lib/ml/maxent.jar:lib/ml/minorthird.jar:lib/nlp/jwnl.jar:li
 #export ASSERT=$1
 
 # Uncomment if run standalone -> set in end2end script
-#export INDRI_INDEX=$HOME/projects/umvoice/wiki_indri_index/
-export INDRI_INDEX=$HOME/sirius/sirius-application/question-answer/wiki_indri_index/
+export INDRI_INDEX=$HOME/projects/umvoice/wiki_indri_index/
+
 cd ..
 
 java -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m info.ephyra.OpenEphyra "$*"

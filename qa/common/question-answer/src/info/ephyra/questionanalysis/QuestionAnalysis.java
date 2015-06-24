@@ -198,8 +198,7 @@ public class QuestionAnalysis {
 	 * @param question question string
 	 * @return analyzed question
 	 */
-	public synchronized static AnalyzedQuestion analyze(String question) {
-		//System.out.println("QuestionAnalysis.analyze(): ARG = " + question);
+	public static AnalyzedQuestion analyze(String question) {
 		// normalize question
 		String qn = QuestionNormalizer.normalize(question);
 		
@@ -216,15 +215,11 @@ public class QuestionAnalysis {
 		String[] kws = KeywordExtractor.getKeywords(verbMod, context);
 		
 		// extract named entities
-		//System.out.println("QuestionAnalysis.analyze(): question = " + question + ", context = " + context);
 		String[][] nes = TermExtractor.getNes(question, context);
 		
 		// extract terms and set relative frequencies
 		Term[] terms = TermExtractor.getTerms(verbMod, context, nes,
 				dicts.toArray(new Dictionary[dicts.size()]));
-		/*AnalyzedQuestion retval;
-		synchronized (terms)
-		{*/
 		for (Term term : terms)
 			term.setRelFrequency(WordFrequencies.lookupRel(term.getText()));
 		
@@ -233,7 +228,7 @@ public class QuestionAnalysis {
 		
 		// determine answer types
 		//String[] ats = AnswerTypeTester.getAnswerTypes(qn, stemmed);
-		String[] ats = getAtypes(question);
+        String[] ats = getAtypes(question);
 		MsgPrinter.printAnswerTypes(ats);
 		Logger.logAnswerTypes(ats);
 		
@@ -245,21 +240,16 @@ public class QuestionAnalysis {
 		
 		// extract predicates
 		Predicate[] ps = (predicates != null) ? predicates
-			: PredicateExtractor.getPredicates(qn, verbMod, ats, terms);
+				: PredicateExtractor.getPredicates(qn, verbMod, ats, terms);
 		MsgPrinter.printPredicates(ps);
 		Logger.logPredicates(ps);
-	
+		
 		// expand terms
 		TermExpander.expandTerms(terms, ps,
 				ontologies.toArray(new Ontology[ontologies.size()]));
-	
-		/*retval = new AnalyzedQuestion(question, qn, stemmed, verbMod, kws, nes,
-			terms, focus, ats, qis, ps);
-		} // END synchonized (terms)*/
-
+		
 		return new AnalyzedQuestion(question, qn, stemmed, verbMod, kws, nes,
 				terms, focus, ats, qis, ps);
-		//return retval;
 	}
     
     public static void main (String[] args) {
