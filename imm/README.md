@@ -7,5 +7,5 @@ make all
 
 For example version, in template/ run 
 ```
-make
+make all
 ```
