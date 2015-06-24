@@ -18,6 +18,7 @@
 #include "../common/subproc.h"
 #include "CommandCenter.h"
 #include "commandcenter_types.h"
+
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -25,6 +26,10 @@
 //#include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TTransportUtils.h>
+
+//boost threading libraries
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
 
 using namespace apache::thrift;
 using namespace apache::thrift::protocol;
