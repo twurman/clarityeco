@@ -3,14 +3,7 @@ CXX = g++
 FLAGS = --std=c++11
 TARGET_CLIENT = client
 TARGET_SERVER = server
-LINK_FLAGS = 	-L$(BOOST_LIB) \
-				-lthrift \
-				-lsox \
-				-lboost_program_options \
-				-lboost_filesystem \
-				-lboost_system \
-				-lboost_thread \
-				-lboost_regex
+LINK_FLAGS = -lthrift -lsox
 
 # Needed for finding header files during preprocessing
 CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
@@ -29,7 +22,7 @@ $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(FLAGS) -I$(CC_DIR) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 %.o: %.cpp
-	$(CXX) $(FLAGS) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+	$(CXX) $(FLAGS) -I$(CC_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
 	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) gen-cpp *.o *~
