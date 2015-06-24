@@ -18,6 +18,7 @@
 #include "../common/subproc.h"
 #include "CommandCenter.h"
 #include "commandcenter_types.h"
+
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -26,10 +27,14 @@
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TTransportUtils.h>
 
-using namespace apache::thrift;
-using namespace apache::thrift::protocol;
-using namespace apache::thrift::transport;
-using namespace apache::thrift::server;
+//boost threading libraries
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+
+using namespace ::apache::thrift;
+using namespace ::apache::thrift::protocol;
+using namespace ::apache::thrift::transport;
+using namespace ::apache::thrift::server;
 using boost::shared_ptr;
 using namespace cmdcenterstubs;
 
@@ -188,6 +193,18 @@ int main(int argc, char **argv) {
 	{
 		std::cout << "Using default port for cc..." << std::endl;
 	}
+	
+	shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
+	shared_ptr<TProcessor> processor(new KaldiServiceProcessor(handler));
+	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+	shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+	shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+
+	TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+ 
+	std::cout << "Starting the automatic speech recognition server on port " << port << "..." << std::endl;
+	boost::thread *serverThread = new boost::thread(boost::bind(&TSimpleServer::serve, &server));
+	// server.serve();
 
 	boost::shared_ptr<TTransport> cmdsocket(new TSocket("localhost", cmdcenterport));
 	boost::shared_ptr<TTransport> cmdtransport(new TBufferedTransport(cmdsocket));
@@ -201,15 +218,5 @@ int main(int argc, char **argv) {
 	cmdclient.registerService("ASR", mDataObj);
 	cmdtransport->close();
 	
-	shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
-  shared_ptr<TProcessor> processor(new KaldiServiceProcessor(handler));
-  shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-  shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-  shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-
-  TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
- 
-	std::cout<<"Starting the automatic speech recognition server on port "<<port<<"..."<<std::endl;
-	server.serve();
-  return 0;
+	return 0;
 }
