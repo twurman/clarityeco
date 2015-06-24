@@ -32,17 +32,11 @@ done
 
 echo "Downloading and installing Dependencies for Kaldi"
 
-# Add additional repositories (ffmpeg)
-add-apt-repository ppa:kirillshkrogalev/ffmpeg-next
-
-# Enable multiverse sources (libfaac-dev)
-apt-add-repository multiverse
-
 # Update sources and install basics
 apt-get update
 apt-get -y install \
   git zip unzip subversion sox \
-  default-jdk ant automake autoconf libtool bison libboost-all-dev ffmpeg \
+  default-jdk ant automake autoconf libtool bison libboost-all-dev \
   swig python-pip curl
 
 # Get ATLAS library for Kaldi
