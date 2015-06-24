@@ -1,54 +1,28 @@
+# Makefile for generating the kaldi-thrift service
 CXX = g++
-PROTO = protoc
-# Needed for linking
-BOOST_LOCATION = /usr/local/boost_1_58_0
-BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
-CXX_FLAGS = -I$(BOOST_LOCATION)
-
-LINK_FLAGS = -L$(BOOST_LIB) \
-					-lopencv_core \
-					-lopencv_highgui \
-					-lopencv_imgproc \
-					-lopencv_nonfree \
-					-lopencv_flann \
-					-lopencv_objdetect \
-					-lopencv_features2d \
-					-lopencv_gpu \
-					-lrt \
-					-lboost_program_options \
-					-lboost_filesystem \
-					-lboost_system \
-					-lboost_thread \
-					-lboost_regex \
-					-lprotobuf \
-					-ltesseract \
-					-lthrift
- 
-TARGET_SERVER = asrserver
-
-CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
-                  $(HOME)/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.o
-# CMDOBJECT_SERVER = CommandCenter.o commandcenter_types.o
-OBJECTS_SERVER = $(CMDOBJECT_SERVER) 
+FLAGS = --std=c++11
+TARGET_CLIENT = client
+TARGET_SERVER = server
+LINK_FLAGS = -lthrift -lsox
 
 # Needed for finding header files during preprocessing
 CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
-GEN_DIR = ./gen-cpp
-COMMON_DIR = ../common
 
-all: $(TARGET_SERVER)
+OBJECTS_CLIENT = gen-cpp/KaldiService.o Kaldi_Client.o
+OBJECTS_SERVER = gen-cpp/KaldiService.o Kaldi_Server.o  
+
+all: $(TARGET_SERVER) $(TARGET_CLIENT)
+
+$(TARGET_CLIENT): $(OBJECTS_CLIENT)
+	$(CXX) $(FLAGS) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LINK_FLAGS)
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
-	$(CXX) -I$(CC_DIR) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXX_FLAGS) $(EXTRA_FLAGS) Kaldi_Server.cpp -o $(TARGET_SERVER) $(LINK_FLAGS)
-	# $(CXX) $(CXX_FLAGS) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
+	$(CXX) $(FLAGS) -I$(CC_DIR) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
-compile:
-	sudo ../common/scripts/compile_kaldi.sh
-
-prepare:
-	sudo ../common/scripts/prepare.sh
+%.o: %.cpp
+	$(CXX) $(FLAGS) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
-	rm -rf 
+	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) gen-cpp *.o *~
 
 .PHONY:	all
