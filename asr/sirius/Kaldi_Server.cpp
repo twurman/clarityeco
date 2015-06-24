@@ -1,11 +1,5 @@
 /*
 * Kaldi Server Using Apache Thrift
-*
-*
-*
-*
-*
-*
 */
 
 #include <stdio.h>
@@ -24,8 +18,6 @@
 #include "../common/subproc.h"
 #include "CommandCenter.h"
 #include "commandcenter_types.h"
-//#include "/home/momo/Research/sirius/sirius-application/command-center/gen-cpp/CommandCenter.h"
-//#include "/home/momo/Research/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>

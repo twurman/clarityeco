@@ -7,9 +7,11 @@ LINK_FLAGS = -lthrift -lsox
 
 # Needed for finding header files during preprocessing
 CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
+CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
+                  $(HOME)/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.o
 
 OBJECTS_CLIENT = gen-cpp/KaldiService.o Kaldi_Client.o
-OBJECTS_SERVER = gen-cpp/KaldiService.o Kaldi_Server.o  
+OBJECTS_SERVER = gen-cpp/KaldiService.o Kaldi_Server.o $(CMDOBJECT_SERVER)
 
 all: $(TARGET_SERVER) $(TARGET_CLIENT)
 
