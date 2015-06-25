@@ -60,3 +60,21 @@ command center thrift binaries.
 
 (Java services) When you compile/run your serve, make sure that the command
 center java libraries are on your class path.
+
+### Running with the mobile app
+The current implementation of the mobile application requires a node.js server as an intermediary between the mobile app and the command center. To run this node server, you must have node installed on your machine as well as npm.
+1) Download the thrift node packages in the command-center/ folder using
+```
+sudo npm install thrift
+```
+You should see a new folder called node_modules
+2) Generate the thrift dependencies using
+```
+thrift --gen js:node filetransfer_svc.thrift
+thrift --gen js:node commandcenter.thrift
+```
+3) Run the server using
+```
+node filetransfer_svc.js <fts_port> <cmdcenter_port>
+```
+Note that depending on how you install node, the command here could be node or nodejs
