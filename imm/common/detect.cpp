@@ -334,7 +334,7 @@ void build_model(DescriptorMatcher *matcher, vector<string> *trainImgs){
 	DescriptorExtractor *extractor = new SurfDescriptorExtractor();
 	
   // Generate desc
-  fs::path db = fs::current_path() + fs::path("matching/landmarks/db");
+  string db = fs::current_path() + "matching/landmarks/db";
   // assert(db == "/home/twurman/clarityeco/imm/common/matching/landmarks/db");
 	fs::path p = fs::system_complete(db);
 	assert(fs::is_directory(p));
