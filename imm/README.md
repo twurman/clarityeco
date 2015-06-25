@@ -8,6 +8,7 @@ make all
 
 For example version, in template/ run 
 ```
+thrift --gen cpp service.thrift
 make all
 ```
 
