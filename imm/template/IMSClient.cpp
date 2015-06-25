@@ -20,7 +20,15 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
 int main(int argc, char** argv) {
-	boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9082));
+	int port = 9082;
+	if (argv[1]) {
+		port = atoi(argv[1]);
+	} else {
+		std::cout << "Using default port for imm..." << std::endl;
+	}
+
+
+	boost::shared_ptr<TTransport> socket(new TSocket("localhost", port));
 	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
 	boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
 	ImageMatchingServiceClient client(protocol);
