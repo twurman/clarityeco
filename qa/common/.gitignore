@@ -1,1 +1,5 @@
 question-answer/wiki_indri_index/**
+question-answer/bin/**
+question-answer-dev/wiki_indri_index/**
+question-answer-dev/bin/**
+wiki_indri_index.tar.gz
