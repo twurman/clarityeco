@@ -24,8 +24,6 @@ LINK_FLAGS =    -L/usr/local/boost_1_58_0/stage/lib \
 TARGET_CLIENT = ccclient
 TARGET_SERVER = ccserver
 
-# As long as the object files are present in the specified locations,
-# linking should work.
 OBJECTS_CLIENT = gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterClient.o
 OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
 		 ../asr/sirius/gen-cpp/KaldiService.o \
@@ -40,10 +38,6 @@ $(TARGET_CLIENT): $(OBJECTS_CLIENT)
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
-
-# FIXME: services should be responsible for making themselves
-#../question-answer/openephyra-thrift/QAService.o: ../question-answer/openephyra-thrift/gen-cpp/QAService.cpp
-#	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 gen-cpp/CommandCenter.o : gen-cpp/CommandCenter.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
