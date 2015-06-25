@@ -1,13 +1,11 @@
-##OpenEphyra
+##Sirius
 
-OpenEphyra is an open source framework for question answering
-developed at Carnegie Mellon.
-
-Two versions of OpenEphyra are included in ClarityEco, both of which use
+Two versions of question-answer are included in ClarityEco, both of which use
 Apache Thrift for remote procedure calls. The version in this directory
-belongs to a collection of services that connect with the new Sirius command center.
+belongs to a collection of services that connect with Sirius.
 
 ####Basic Setup
+
 (1) Generate client/server stubs:
 
 ```
@@ -35,6 +33,7 @@ CMDCENTERPORT = the port used by the command center
 `./start-qa-server-thrift.sh (PORT) (CMDCENTER-PORT)`
 
 ####Troubleshooting
+
 Error message:
 
   `org.apache.thrift.transport.TTransportException: java.net.ConnectException: Connection refused`
