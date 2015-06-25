@@ -3,8 +3,11 @@ PROTO = protoc
 # Needed for linking
 BOOST_LOCATION = /usr/local/boost_1_58_0
 BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
-CXX_FLAGS = -I$(BOOST_LOCATION)
+CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
+GEN_DIR = ./gen-cpp
+COMMON_DIR = ../common
 
+CXX_FLAGS = -I$(BOOST_LOCATION)
 LINK_FLAGS = -L$(BOOST_LIB) \
 					-lopencv_core \
 					-lopencv_highgui \
@@ -26,8 +29,8 @@ LINK_FLAGS = -L$(BOOST_LIB) \
  
 TARGET_SERVER = imserver
 
-CMDOBJECT_SERVER = $(HOME)/sirius/sirius-application/command-center/gen-cpp/CommandCenter.o \
-                  $(HOME)/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.o
+CMDOBJECT_SERVER = $(CC_DIR)/CommandCenter.o \
+                  $(CC_DIR)/commandcenter_types.o
 # CMDOBJECT_SERVER = CommandCenter.o commandcenter_types.o
 OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 					./gen-cpp/ImageMatchingService.o \
@@ -36,11 +39,6 @@ OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 					../common/keypoints.pb.cc \
 					../common/store_mat.pb.cc \
 					IMSDaemon.o
-
-# Needed for finding header files during preprocessing
-CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
-GEN_DIR = ./gen-cpp
-COMMON_DIR = ../common
 
 proto:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)

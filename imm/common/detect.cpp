@@ -332,10 +332,10 @@ void build_model(DescriptorMatcher *matcher, vector<string> *trainImgs){
 	vector<Mat> trainDesc;
 	FeatureDetector *detector = new SurfFeatureDetector();
 	DescriptorExtractor *extractor = new SurfDescriptorExtractor();
-
-	// Generate desc
-	// FIXME this is only used for testing
-	fs::path p = fs::system_complete("/home/tollben/sirius/sirius-application/image-matching/matching/landmarks/db");
+	
+  // Generate desc
+  string db = fs::current_path().parent_path().string() + "/common/matching/landmarks/db";
+	fs::path p = fs::system_complete(db);
 	assert(fs::is_directory(p));
 
 	fs::directory_iterator end_iter;
