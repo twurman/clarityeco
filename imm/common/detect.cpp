@@ -335,7 +335,7 @@ void build_model(DescriptorMatcher *matcher, vector<string> *trainImgs){
 	
   // Generate desc
   string db = fs::current_path().string() + "matching/landmarks/db";
-  // assert(db == "/home/twurman/clarityeco/imm/common/matching/landmarks/db");
+  assert(db == "/home/twurman/clarityeco/imm/common/matching/landmarks/db");
 	fs::path p = fs::system_complete(db);
 	assert(fs::is_directory(p));
 
