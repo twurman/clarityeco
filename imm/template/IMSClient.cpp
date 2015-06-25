@@ -12,7 +12,7 @@
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TTransportUtils.h>
 
-#include "ImageMatchingService.h"
+#include "gen-cpp/ImageMatchingService.h"
 
 using namespace std;
 using namespace apache::thrift;

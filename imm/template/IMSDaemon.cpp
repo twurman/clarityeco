@@ -24,7 +24,7 @@
 #include <boost/bind.hpp>
 
 // import the service headers
-#include "ImageMatchingService.h"
+#include "gen-cpp/ImageMatchingService.h"
 #include "../common/detect.h"
 
 // define the namespace
