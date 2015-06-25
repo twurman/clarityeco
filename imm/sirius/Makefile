@@ -1,9 +1,8 @@
+include ../../Makefile.config
+
 CXX = g++
 PROTO = protoc
 # Needed for linking
-BOOST_LOCATION = /usr/local/boost_1_58_0
-BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
-CC_DIR = $(HOME)/sirius/sirius-application/command-center/gen-cpp
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common
 
