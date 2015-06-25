@@ -1,9 +1,3 @@
-/*
- *
- *
- *
- */
-
 // import the thrift headers
 #include <thrift/concurrency/ThreadManager.h>
 #include <thrift/concurrency/PosixThreadFactory.h>
