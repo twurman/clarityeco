@@ -1,3 +1,5 @@
+include ../../Makefile.config
+
 compile:
 	sudo ./scripts/compile_kaldi.sh
 
