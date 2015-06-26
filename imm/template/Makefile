@@ -57,6 +57,6 @@ common:
 all: proto common $(TARGET_SERVER) $(TARGET_CLIENT)
 
 clean:
-	rm -rf $(TARGET_SERVER) *.o
+	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) *.o
 
 .PHONY:	all
