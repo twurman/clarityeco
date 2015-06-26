@@ -17,7 +17,6 @@
 #include "gen-cpp/KaldiService.h"
 #include "../common/subproc.h"
 #include "CommandCenter.h"
-#include "commandcenter_types.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -171,7 +170,7 @@ int main(int argc, char **argv) {
 	int port = 9090;
 	//Register with the command center 
 	int cmdcenterport = 8081;
-	if (argv[1])
+	if (argc==2)
 	{
 		port = atoi(argv[1]);
 	}
@@ -180,15 +179,15 @@ int main(int argc, char **argv) {
 		std::cout << "Using default port for asr..." << std::endl;
 	}
 
-	if (argv[2])
+	if (argc==3)
 	{
-		cmdcenterport = atoi(argv[2]);
+		port =atoi(argv[2]);
+		cmdcenterport = atoi(argv[3]);
 	}
 	else
 	{
 		std::cout << "Using default port for cc..." << std::endl;
 	}
-
 	boost::shared_ptr<TTransport> cmdsocket(new TSocket("localhost", cmdcenterport));
 	boost::shared_ptr<TTransport> cmdtransport(new TBufferedTransport(cmdsocket));
 	boost::shared_ptr<TProtocol> cmdprotocol(new TBinaryProtocol(cmdtransport));

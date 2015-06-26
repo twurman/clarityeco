@@ -22,10 +22,6 @@
 
 #include "gen-cpp/KaldiService.h"
 #include "../common/subproc.h"
-//#include "CommandCenter.h"
-//#include "commandcenter_types.h"
-#include "/home/momo/Research/sirius/sirius-application/command-center/gen-cpp/CommandCenter.h"
-#include "/home/momo/Research/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -39,7 +35,6 @@ using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 using boost::shared_ptr;
-using namespace cmdcenterstubs;
 
 
 class KaldiServiceHandler : virtual public KaldiServiceIf {
@@ -159,18 +154,26 @@ class KaldiServiceHandler : virtual public KaldiServiceIf {
 
 
 int main(int argc, char **argv) {
-
-	const char* const argvc[]={"../../../src/online2bin/online2-wav-nnet2-latgen-faster",
+	//Creating a server port
+	int server_port=9090;
+	if(argv[1]){
+		server_port = atoi(argv[1]);
+		std::cout<< "Using port "<<server_port<<" for asr"<<std::endl;
+	}
+	else{
+		std::cout<< "Using default port "<<server_port<<" for asr"<<std::endl;
+	}
+	const char* const argvc[]={"../common/src/online2bin/online2-wav-nnet2-latgen-faster",
 					"--do-endpointing=false",
 					"--online=true",
-					"--config=../../nnet_a_gpu_online/conf/online_nnet2_decoding.conf",
+					"--config=../common/nnet_a_gpu_online/conf/online_nnet2_decoding.conf",
 					"--max-active=7000",
 					"--beam=15.0",
 					"--lattice-beam=6.0",
 					"--acoustic-scale=0.1",
-					"--word-symbol-table=../../graph/words.txt",
-					"../../nnet_a_gpu_online/smbr_epoch2.mdl", 
-					"../../graph/HCLG.fst",
+					"--word-symbol-table=../common/graph/words.txt",
+					"../common/nnet_a_gpu_online/smbr_epoch2.mdl", 
+					"../common/graph/HCLG.fst",
 					"\"ark:echo utterance-id1 utterance-id1|\"",
 					"\"scp:echo utterance-id1 null|\"",
 					"ark:/dev/null",(char*)NULL};
@@ -180,7 +183,7 @@ int main(int argc, char **argv) {
 
 	shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
   shared_ptr<TProcessor> processor(new KaldiServiceProcessor(handler));
-  shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+  shared_ptr<TServerTransport> serverTransport(new TServerSocket(server_port));
   shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
   shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 

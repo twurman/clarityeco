@@ -19,8 +19,18 @@ using namespace apache::thrift::transport;
 
 
 int main(int argc, char ** argv){
-
-	boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
+	//Audio file from command line
+	string audio_file;
+	//Creating a server_port
+	int server_port =9090;	
+	if(argc==3){
+		server_port = atoi(argv[1]);
+		audio_file = argv[2];
+	}
+	else{
+		audio_file = argv[1];
+	}
+	boost::shared_ptr<TTransport> socket(new TSocket("localhost", server_port));
 	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
 	boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
 	KaldiServiceClient client(protocol);
@@ -28,7 +38,6 @@ int main(int argc, char ** argv){
 	struct timeval tv1, tv2;
 	try{	
 		string answer;
-		string audio_file= argv[1];
 	
 		ifstream fin(audio_file.c_str(), ios::binary);
 		if (!fin) std::cerr << "Could not open the file!" << std::endl;
