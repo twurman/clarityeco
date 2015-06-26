@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	if (argv[1]) {
 		port = atoi(argv[1]);
 	} else {
-		std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 		ostringstream ostrm;
                 ostrm << fin.rdbuf();
 		string image(ostrm.str());
-		if (!fin) std::cerr << "Could not open the file!" << std::endl;
+		if (!fin) cerr << "Could not open the file!" << endl;
 
 		transport->open();
 		string response;

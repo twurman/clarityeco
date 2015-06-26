@@ -70,9 +70,9 @@ private:
 int main(int argc, char **argv){
 	int port = 9082;
 	if (argv[1]) {
-	port = atoi(argv[1]);
+		port = atoi(argv[1]);
 	} else {
-	std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
 	// initial the transport factory
