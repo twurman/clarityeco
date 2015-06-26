@@ -81,15 +81,15 @@ int main(int argc, char **argv){
 	//Register with the command center 
 	int cmdcenterport = 8081;
 	if (argv[1]) {
-	port = atoi(argv[1]);
+		port = atoi(argv[1]);
 	} else {
-	std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
 	if (argv[2]) {
-	cmdcenterport = atoi(argv[2]);
+		cmdcenterport = atoi(argv[2]);
 	} else {
-	std::cout << "Using default port for cc..." << std::endl;
+		cout << "Using default port for cc..." << endl;
 	}
 
 	// initialize the transport factory
