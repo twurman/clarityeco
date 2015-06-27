@@ -4,6 +4,11 @@ Two versions of question-answer are included in ClarityEco, both of which use
 Apache Thrift for remote procedure calls. The version in this directory
 is a stand-alone service for use in any application.
 
+####Simple Demo
+If you just want to see a demo, run the following command:
+
+`./qa-demo.sh`
+
 ####Basic Setup
 
 (1) Generate client/server stubs:
