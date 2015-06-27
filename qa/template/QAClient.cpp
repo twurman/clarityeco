@@ -12,6 +12,7 @@
 #include <thrift/transport/TTransportUtils.h>
 
 #include "gen-cpp/QAService.h"
+#define NUM_ARGS 3
 
 // NOTE: I'm assuming that std is unlikely to
 // create global namespace conflicts with apache thrift
@@ -26,11 +27,17 @@ void clientAskList(qastubs::QAServiceClient& client, string question);
 int main(int argc, char** argv)
 {
 	// Expects input in the form ./qaclient <question> <port>
+	if (argc != 3)
+	{
+		cout << "Usage: ./qaclient (QUESTION) (PORT)" << endl;
+		exit(1);
+	}
+	
         boost::shared_ptr<TTransport> socket(new TSocket("localhost", atoi(argv[2])));
         boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
         boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
         qastubs::QAServiceClient client(protocol);
-	
+
 	try {
 		// Extract question from input
 		string question(argv[1]);
