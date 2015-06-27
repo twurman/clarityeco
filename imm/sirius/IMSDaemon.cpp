@@ -32,8 +32,6 @@
 // import the service headers
 #include "gen-cpp/ImageMatchingService.h"
 #include "../common/detect.h"
-//#include "~/sirius/sirius-application/command-center/gen-cpp/CommandCenter.h"
-//#include "~/sirius/sirius-application/command-center/gen-cpp/commandcenter_types.h"
 #include "CommandCenter.h"
 #include "commandcenter_types.h"
 
@@ -94,22 +92,22 @@ int main(int argc, char **argv){
 	std::cout << "Using default port for cc..." << std::endl;
 	}
 
-	// initial the transport factory
+	// initialize the transport factory
 	boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
 	boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-	// initial the protocal factory
+	// initialize the protocal factory
 	boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-	// initial the request handler
+	// initialize the request handler
 	boost::shared_ptr<ImageMatchingServiceHandler> handler(new ImageMatchingServiceHandler());
-	// initial the processor
+	// initialize the processor
 	boost::shared_ptr<TProcessor> processor(new ImageMatchingServiceProcessor(handler));
-	// initial the thread manager and factory
+	// initialize the thread manager and factory
 	boost::shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(THREAD_WORKS);
 	boost::shared_ptr<PosixThreadFactory> threadFactory = boost::shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
 	threadManager->threadFactory(threadFactory);
 	threadManager->start();
 
-	// initial the image matching server
+	// initialize the image matching server
 	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
 
 	cout << "Starting the image matching server..." << endl;

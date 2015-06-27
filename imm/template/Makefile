@@ -1,10 +1,9 @@
+include ../../Makefile.config
+
 CXX = g++
 PROTO = protoc
-# Needed for linking
-BOOST_LOCATION = /usr/local/boost_1_58_0
-BOOST_LIB = /usr/local/boost_1_58_0/stage/lib
-CXX_FLAGS = -I$(BOOST_LOCATION)
 
+CXX_FLAGS = -I$(BOOST_LOCATION)
 LINK_FLAGS = -L$(BOOST_LIB) \
 					-lopencv_core \
 					-lopencv_highgui \
@@ -58,6 +57,6 @@ common:
 all: proto common $(TARGET_SERVER) $(TARGET_CLIENT)
 
 clean:
-	rm -rf $(TARGET_SERVER) *.o
+	rm -rf $(TARGET_CLIENT) $(TARGET_SERVER) *.o
 
 .PHONY:	all
