@@ -8,16 +8,18 @@ Two Versions of Open Ephyra are included in ClarityEco, both of which use Apache
 ###Basic Setup###
 
 ```
-$ thrift --gen cpp kaldi.thrift
 $ make 
 ```
 
+###Running Server and Client###
 Open a second terminal to this same location.
 
 In the first one, start up the serve with this command:
 
-`$ ./server`
+PORT = the port that the Kaldi Server uses
+
+`$ ./server (PORT)`
 
 In the second one, run the client with a .wav file:
 
-`$ ./client ../../../inputs/questions/what.is.the.speed.of.light.wav`
+`$ ./client (PORT) ../common/ENG_M.wav`

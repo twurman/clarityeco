@@ -28,5 +28,4 @@ $ ./compile-kaldi.sh
 
 ###NOTES###
 1. Make sure to resolve any extra dependencies that may appear before compiling kaldi with `compile-kaldi.sh`
-2. Error with Openfst may appear when compiling, to resolve go to the `tools/` and type `make` and then try compiling again with `compile-kaldi.sh`
-3. Please refer to the `INSTALL` file in `tools/` file after tools.tar.gz  
+2. Error with Openfst may appear when compiling, to resolve go to the `tools/` directory  and type `make` and then try compiling again with `compile-kaldi.sh`

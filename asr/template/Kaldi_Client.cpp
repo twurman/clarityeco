@@ -27,8 +27,12 @@ int main(int argc, char ** argv){
 		server_port = atoi(argv[1]);
 		audio_file = argv[2];
 	}
-	else{
+	else if (argc==2){
 		audio_file = argv[1];
+	}
+	else{
+		std::cerr<<"At least provide a input file in .wav format"<<std::endl;
+		exit(0);
 	}
 	boost::shared_ptr<TTransport> socket(new TSocket("localhost", server_port));
 	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));

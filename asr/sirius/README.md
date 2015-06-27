@@ -8,12 +8,14 @@ Two Versions of Open Ephyra are included in ClarityEco, both of which use Apache
 ###Basic Setup###
 
 ```
-$ thrift --gen cpp kaldi.thrift
 $ make 
 ```
+##Running Server###
+(Make sure command center is running)
+
 Start server:
 
-PORT = the por that the Kaldi Server uses
+PORT = the port that the Kaldi Server uses
 
 CMDCENTERPORT = the port used by the command center
 
