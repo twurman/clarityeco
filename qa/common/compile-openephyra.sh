@@ -3,14 +3,18 @@
 source ../../java-config.sh
 
 # Build OpenEphyra
-cd ../common/question-answer
+echo "Building OpenEphyra..."
+cd question-answer
 ant
+cd ..
 
 # Build Wikipedia database
-if [ ! -d "wiki_indri_index" ]; then
-	echo "DRY RUN"
-	#wget http://web.eecs.umich.edu/~jahausw/download/wiki_indri_index.tar.gz
-	#tar xzvf wiki_indri_index.tar.gz -C question-answer/
+if [ ! -d "question-answer/wiki_indri_index" ]; then
+	echo "Building Wikipedia database..."
+	wget http://web.eecs.umich.edu/~jahausw/download/wiki_indri_index.tar.gz
+	tar xzvf wiki_indri_index.tar.gz -C question-answer/
+else
+	echo "Wikipedia database has already been built"
 fi
 
 echo "OpenEphyra done"
