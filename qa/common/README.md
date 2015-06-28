@@ -1,7 +1,8 @@
 ##Common
 
-This directory contains resources shared between
-versions of the question-answer service.
+common/ contains resources shared between versions of the question-answer service.
+You shouldn't need to modify anything in this directory, unless you want to create
+another question-answer back-end.
 
 question-answer-dev/ -- contains a modified version of the OpenEphyra pkg.
 
@@ -9,18 +10,4 @@ question-answer/ -- contains the original version of the OpenEphyra pkg.
 
 question-answer.tar.gz -- the original OpenEphyra tarball.
 
-####Basic Setup
-
-1) Build OpenEphyra bytecodes
-
-```
-cd question-answer
-ant
-```
-
-2) Build the Wikipedia database
-
-```
-wget http://web.eecs.umich.edu/~jahausw/download/wiki_indri_index.tar.gz
-tar xzvf wiki_indri_index.tar.gz -C question-answer/
-```
+Last Modified: 06/28/15

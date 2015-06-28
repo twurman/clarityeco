@@ -15,3 +15,5 @@ If Sirius is not already running, first follow the directions [here](../../comma
 cd ../../command-center
 ./ccclient --qa (SIRIUS-PORT)
 ```
+
+Last Modified: 06/28/15
