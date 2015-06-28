@@ -24,14 +24,12 @@ vim $1
 # that will be used to search for the timestamp.
 tagpattern="Last Modified:"
 datepattern="[[:digit:]]{2}/[[:digit:]]{2}/[[:digit:]]{2}"
-timepattern="[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}"
-pattern="$tagpattern[[:space:]]$datepattern[[:space:]]*$timepattern"
+pattern="$tagpattern[[:space:]]$datepattern"
 
 echo -e "Examining $1..."
 # Prepare a timestamp
 date_lastmodified=`date -r "$1" +%m/%d/%y`
-time_lastmodified=`date -r "$1" +%H:%M:%S`
-timestamp="Last Modified: $date_lastmodified $time_lastmodified" 
+timestamp="Last Modified: $date_lastmodified" 
 
 lastline=`sed -n '$'p $1`
 # If I used sed instead of grep, I would need to use
@@ -42,8 +40,6 @@ lastline=`sed -n '$'p $1`
 #	-e = regex pattern to search for
 if echo "$lastline" | grep -q -E -e "$pattern"
 then
-	echo -e "new timestamp = $timestamp"
-	echo -e "old timestamp = $lastline"
 	# NOTE: you can use any delimiter with sed,
 	# with the caveat that the delimiter cannot
 	# appear in the regex pattern or the replacement.
@@ -52,7 +48,14 @@ then
 	# The address, '$', ensures that the 's' command
 	# is only executed on the last line
 	# of the file.
-	sed -i "$ s@$lastline@$timestamp@" $1 
+	if [ "$lastline" != "$timestamp" ]; then
+		timestamp="Last Modified: `date +%m/%d/%y`"
+		echo -e "new timestamp = $timestamp"
+		echo -e "old timestamp = $lastline"
+		sed -i "$ s@$lastline@$timestamp@" $1 
+	else
+		echo -e "timestamp is up-to-date"
+	fi
 else
 	echo -e "TIMESTAMP NOT FOUND"
 	echo -e "\n$timestamp" >> $1
