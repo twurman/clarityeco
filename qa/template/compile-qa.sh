@@ -13,20 +13,13 @@ echo -e "Making QA client...\n"
 make
 
 # Compile server
-# Rather than forking a subshell, execute all commands
-# in java-config.sh in the current shell.
-source ../../java-config.sh
+# 'source' command: Rather than forking a subshell, execute all commands
+# in the current shell.
 cd ../common
-../common/compile-openephyra.sh
+	./compile-openephyra.sh
+	source ./qa-compile-config.sh
 cd ../template
-
 echo -e "Using thrift directory $thrift...\n"
-
-# Add thrift libraries to class path
-export JAVA_CLASS_PATH=$thrift/lib/java/build/libthrift-0.9.2.jar:$thrift/lib/java/build/lib/slf4j-api-1.5.8.jar:$thrift/lib/java/build/lib/slf4j-log4j12-1.5.8.jar:$thrift/lib/java/build/lib/log4j-1.2.14.jar
-
-# Add OpenEphyra libraries to class path
-export JAVA_CLASS_PATH=$JAVA_CLASS_PATH:../common/question-answer/bin
 
 # Use cp flag to avoid cluttering up the CLASSPATH environment variable
 echo -e "Compiling QA server...\n"
