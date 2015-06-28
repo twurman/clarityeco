@@ -3,20 +3,15 @@
 The question-answer program in sirius/ belongs to a collection of services that connect with Sirius.
 
 ####Basic Setup
+If Sirius is not already running, first follow the directions [here](../../command-center/README.md).
 
 1) Compile server: `./compile-qa.sh`
 
 2) Start server: `./start-qa.sh (PORT) (SIRIUS-PORT)`
 
-####Troubleshooting
+3) Run the tests:
 
-Error message:
-
-  `org.apache.thrift.transport.TTransportException: java.net.ConnectException: Connection refused`
-
-Solution:  The QA service automatically tries to register with the Sirius
-  at the specified port.
-  If the Sirius is not running, then registration fails,
-  and this message is reported.
-  
-  To solve this problem, first start the Sirius server.
+```
+cd ../../command-center
+./ccclient --qa (SIRIUS-PORT)
+```
