@@ -34,7 +34,7 @@ OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
 all: cc_thrift fts_thrift $(TARGET_SERVER) $(TARGET_CLIENT)
 
 cc_thrift:
-	thrift --gen cpp --gen java commandcenter.thrift
+	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 
 fts_thrift:
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
