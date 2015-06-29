@@ -31,7 +31,13 @@ OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
 		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o \
 		base64.o
 
-all: $(TARGET_SERVER) $(TARGET_CLIENT)
+all: cc_thrift fts_thrift $(TARGET_SERVER) $(TARGET_CLIENT)
+
+cc_thrift:
+	thrift --gen cpp --gen java commandcenter.thrift
+
+fts_thrift:
+	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
 	$(CXX) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LINK_FLAGS)
