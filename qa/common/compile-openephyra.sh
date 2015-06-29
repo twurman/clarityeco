@@ -3,7 +3,8 @@
 source ../../java-config.sh
 
 # Build OpenEphyra
-echo "Building OpenEphyra..."
+echo -e "./compile-openephyra.sh: `pwd`"
+echo -e "./compile-openephyra.sh: Building OpenEphyra..."
 cd question-answer
 ant
 cd ..

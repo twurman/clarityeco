@@ -17,22 +17,12 @@ LINK_FLAGS = -lopencv_core \
                          -ltesseract \
 			 -lthrift
 
-TARGET_CLIENT = qaclient 
+all: gen-cpp/QAService.o 
 
-OBJECTS_CLIENT = QAService.o QAClient.o 
-
-all: $(TARGET_CLIENT)
-
-$(TARGET_CLIENT): $(OBJECTS_CLIENT)
-	$(CXX) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LINK_FLAGS)
-
-QAService.o: gen-cpp/QAService.cpp
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
-
-QAClient.o: QAClient.cpp
+gen-cpp/QAService.o: gen-cpp/QAService.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
-	rm -rf $(TARGET_CLIENT) *.o
+	rm -rf *.o gen-cpp/*.o
 
 .PHONY:	all
