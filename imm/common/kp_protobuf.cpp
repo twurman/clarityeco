@@ -156,8 +156,6 @@ void save_mat(Mat descriptors, const char *filename) {
   store_mat.set_col(descriptors.cols);
   store_mat.set_flags(descriptors.flags);
   store_mat.set_step(descriptors.step);
-  // cout << descriptors.dataend << endl;
-  // cout << descriptors.datastart << endl;
   store_mat.set_size(descriptors.dataend - descriptors.datastart);
   store_mat.set_type(descriptors.type());
 

@@ -93,8 +93,8 @@ int main(int argc, char **argv){
 	// initialize the image matching server
 	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
 
-	cout << "Starting the image matching server..." << endl;
+	cout << "Starting the image matching server on port " << port << endl;
 	server.serve();
-	cout << "Done..." << endl;
+
 	return 0;
 }
