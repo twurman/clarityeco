@@ -4,8 +4,9 @@ The question answering service is currently a wrapper around OpenEphyra,
 an open source project from Carnegie Mellon.
 
 Dependencies: You'll need to install thrift and modify java-config.sh
-to include the path to your thrift installation. Then follow the java-specific
-instructions [here] (https://thrift.apache.org/lib/java).
+to include the path to your thrift installation. Then visit (thrift)/lib/java
+and run `ant`, where (thrift) is the directory where you installed thrift.
+For more information, take a look at [this](https://thrift.apache.org/lib/java).
 This version has been tested with thrift-0.9.2.
 
 common/ -- Contains the actual OpenEphyra package, with some modifications.
