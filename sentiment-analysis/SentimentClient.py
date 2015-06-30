@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This thrfit client is created to send natural language texts to the sentiment analysis service, which returns polarity and score for the whole texts. JSON data format is also supported to easily interpret the results.
+This thrift client is created to send natural language texts to the sentiment analysis service, which returns polarity and score for the whole texts. JSON data format is also supported to easily interpret the results.
 
 @author: Hailong Yang (hailong@umich.edu)
 
@@ -25,28 +25,22 @@ if len(sys.argv) != 4:
 
 try:
   
-  # Make socket
   transport = TSocket.TSocket(sys.argv[1], int(sys.argv[2]))
 
-  # Buffering is critical. Raw sockets are very slow
   transport = TTransport.TBufferedTransport(transport)
 
-  # Wrap in a protocol
   protocol = TJSONProtocol.TJSONProtocol(transport)
 
-  # Create a client to use the protocol encoder
   client = SentimentAnalysis.Client(protocol)
 
   f = open(sys.argv[3], 'r')
   content = BeautifulSoup(f.read()).get_text()
   f.close()
 
-  # Connect!
   transport.open()
   
   print client.doAnalysis(content)
 
-  # Close!
   transport.close()
 
 except Thrift.TException, tx:

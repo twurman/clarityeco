@@ -35,14 +35,14 @@ class SentimentAnalysisHandler:
 	logging.basicConfig(filename='service.log', format='[%(asctime)s]%(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
     def doAnalysis(self, content):
-	logging.info('received from Notion - ' + content.strip())
+	logging.info('received original content - ' + content.strip())
 	clean_content = preprocess(content)
 	logging.info('content after cleaning - ' + clean_content)
         t_begin = datetime.datetime.now()
         splitted_sentences = self.splitter.split(clean_content)
         pos_tagged_sentences = self.postagger.pos_tag(splitted_sentences)
         dict_tagged_sentences = self.dicttagger.tag(pos_tagged_sentences)
-	# print dict_tagged_sentences
+
         score = sentiment_score(dict_tagged_sentences)
         t_end = datetime.datetime.now()
         t_delta = t_end - t_begin
@@ -50,15 +50,11 @@ class SentimentAnalysisHandler:
 	analysis = Response()
 	if score > 0:
 		analysis.polarity = 'positive'
-	#	return 'positive: ' + str(score)
 	elif score < 0:
 		analysis.polarity = 'negative'
-	#	return 'negative: ' + str(score)
 	else:
 		analysis.polarity = 'neutral'
-	#	return 'neutral: ' + str(score)
 	analysis.score = str(score)
-	# json = TSerialization.serialize(analysis, TJSONProtocol.TJSONProtocolFactory());
 	json = TSerialization.serialize(analysis, TJSONProtocol.TSimpleJSONProtocolFactory());
         logging.info('sentiment analysis score: %.1f' % score)
 	logging.info('replied with JSON format: ' + json)
@@ -72,11 +68,6 @@ class Splitter(object):
         self.nltk_tokenizer = nltk.tokenize.TreebankWordTokenizer()
 
     def split(self, text):
-        """
-        input format: a paragraph of text
-        output format: a list of lists of words.
-            e.g.: [['this', 'is', 'a', 'sentence'], ['this', 'is', 'another', 'one']]
-        """
         sentences = self.nltk_splitter.tokenize(text)
         tokenized_sentences = [self.nltk_tokenizer.tokenize(sent) for sent in sentences]
         return tokenized_sentences
@@ -85,19 +76,9 @@ class Splitter(object):
 class POSTagger(object):
 
     def __init__(self):
-        # self.pos_tagger = nltk.tag.SennaTagger('/home/hailong/senna')
 	pass
         
     def pos_tag(self, sentences):
-        """
-        input format: list of lists of words
-            e.g.: [['this', 'is', 'a', 'sentence'], ['this', 'is', 'another', 'one']]
-        output format: list of lists of tagged tokens. Each tagged tokens has a
-        form, a lemma, and a list of tags
-            e.g: [[('this', 'this', ['DT']), ('is', 'is', ['VBZ']), ('a', 'a', ['DT']), ('sentence', 'sentence', ['NN'])],
-                    [('this', 'this', ['DT']), ('is', 'is', ['VBZ']), ('another', 'another', ['DT']), ('one', 'one', ['CD'])]]
-        """
-        # pos = [self.pos_tagger.tag(sentence) for sentence in sentences]
         pos = [nltk.pos_tag(sentence) for sentence in sentences]
         pos = [[(word, word, [postag]) for (word, postag) in sentence] for sentence in pos]
         return pos
@@ -142,7 +123,6 @@ class DictionaryTagger(object):
             else:
                 self.polarity_dictionary[key_str] = {sub_key_str: entry}
         dictionary_file.close()
-        #print self.polarity_dictionary
    
 
     def tag(self, postagged_sentences):
@@ -173,11 +153,9 @@ class DictionaryTagger(object):
                     i = j
                     pos_tag = sentence[original_position][2]
                     taggings = [tag for tag in self.lookup_with_pos_tag(literal, pos_tag)]
-                    #print "taggings =", taggings
                     tagged_expression = (expression_form, expression_lemma, taggings)
                     if is_single_token:
                         original_token_tagging = sentence[original_position][2]
-                        # attach the original tagging (pos tags) to the end of polarity tags
                         tagged_expression[2].extend(original_token_tagging)
                     tag_sentence.append(tagged_expression)
                     tagged = True
@@ -187,7 +165,6 @@ class DictionaryTagger(object):
                     original_position = i
                     i = j
                     taggings = [tag for tag in self.lookup_shifter(literal)]
-                    #print "taggings (shifter) =", taggings
                     tagged_expression = (expression_form, expression_lemma, taggings)
                     if is_single_token:
                         original_token_tagging = sentence[original_position][2]
@@ -196,7 +173,6 @@ class DictionaryTagger(object):
                     shifter_tagged = True
                 else:
                     j = j - 1
-            #if not tagged and not shifter_tagged:
             if not tagged and not shifter_tagged:
                 tag_sentence.append(sentence[i])
                 i += 1
@@ -227,7 +203,6 @@ class DictionaryTagger(object):
             return []
     def lookup_shifter(self, token):
         return [shifter_tag for shifter_tag in self.shifter_dictionary[token]]
-        #if token in self.shifter_dictionary:
 
 def value_of_shifter(tags):
 
@@ -260,7 +235,6 @@ def sentence_score(sentence_tokens, previous_token, acum_score):
     else:
         current_token = sentence_tokens[0]
         tags = current_token[2]
-        # token_score = sum([value_of_sentiment(tag) for tag in tags])
         token_score = value_of_sentiment(tags)
         if previous_token is not None:
             previous_tags = previous_token[2]
@@ -269,14 +243,11 @@ def sentence_score(sentence_tokens, previous_token, acum_score):
         return sentence_score(sentence_tokens[1:], current_token, acum_score + token_score)
 
 def sentiment_score(review):
-    #print("Analyzing review:\n", review)
     summation = 0.0
     for sentence in review:
         score = sentence_score(sentence, None, 0.0)
-        #print sentence, score
         summation += score
     return summation
-    #return sum([sentence_score(sentence, None, 0.0) for sentence in review])
 
 def preprocess(content):
     # remove the extra whitespaces
@@ -300,7 +271,7 @@ transport = TSocket.TServerSocket(port=service_port)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TJSONProtocol.TJSONProtocolFactory()
 server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
-print 'Starting the sentiment server at port %d...' % service_port 
+print 'Starting the sentiment server...'
 server.serve()
 print 'done.'
 
