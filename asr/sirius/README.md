@@ -3,7 +3,7 @@
 
 Kaldi has been wraped in RPC framework using [Apache Thrift](http://thrift.apache.org/). 
 
-Two Versions of Open Ephyra are included in ClarityEco, both of which use Apache Thrift for remote procedure calls. The version in this directory belongs to a collection of services that connect with the new Sirus command center
+Two Versions of Kaldi  are included in ClarityEco, both of which use Apache Thrift for remote procedure calls. The version in this directory belongs to a collection of services that connect with the new Sirus command center
 
 ###Basic Setup###
 
@@ -11,7 +11,7 @@ Two Versions of Open Ephyra are included in ClarityEco, both of which use Apache
 $ make 
 ```
 ##Running Server###
-(Make sure command center is running)
+(Make sure command center is running in a seperate terminal)
 
 Start server:
 
@@ -19,7 +19,7 @@ PORT = the port that the Kaldi Server uses
 
 CMDCENTERPORT = the port used by the command center
 
-In the first one, start up the serve with this command:
+Run this executable with a port and a command center port
 
 `$ ./server (PORT) (CMDCENTER-PORT)` 
 

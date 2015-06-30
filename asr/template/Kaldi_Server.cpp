@@ -89,7 +89,9 @@ class KaldiServiceHandler : virtual public KaldiServiceIf {
 			_return = answer;
 
   	}
-	
+  //An Input is the  file in a form of a string
+  //processes the file and return the answer in the form of 
+  //text	
 	void KaldiServiceHandler::sox(){
 		static sox_format_t * in, * out; /* input and output files */
 		sox_effects_chain_t * chain;
@@ -164,24 +166,24 @@ int main(int argc, char **argv) {
 		std::cout<< "Using default port "<<server_port<<" for asr"<<std::endl;
 	}
 	const char* const argvc[]={"../common/src/online2bin/online2-wav-nnet2-latgen-faster",
-					"--do-endpointing=false",
-					"--online=true",
-					"--config=../common/nnet_a_gpu_online/conf/online_nnet2_decoding.conf",
-					"--max-active=7000",
-					"--beam=15.0",
-					"--lattice-beam=6.0",
-					"--acoustic-scale=0.1",
-					"--word-symbol-table=../common/graph/words.txt",
-					"../common/nnet_a_gpu_online/smbr_epoch2.mdl", 
-					"../common/graph/HCLG.fst",
-					"\"ark:echo utterance-id1 utterance-id1|\"",
-					"\"scp:echo utterance-id1 null|\"",
-					"ark:/dev/null",(char*)NULL};
+    "--do-endpointing=false",
+		"--online=true",
+    "--config=../common/nnet_a_gpu_online/conf/online_nnet2_decoding.conf",
+    "--max-active=7000",
+    "--beam=15.0",
+    "--lattice-beam=6.0",
+    "--acoustic-scale=0.1",
+    "--word-symbol-table=../common/graph/words.txt",
+    "../common/nnet_a_gpu_online/smbr_epoch2.mdl", 
+    "../common/graph/HCLG.fst",
+    "\"ark:echo utterance-id1 utterance-id1|\"",
+    "\"scp:echo utterance-id1 null|\"",
+    "ark:/dev/null",(char*)NULL};
 	
 
 	int port = 9090;
 
-	shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
+  shared_ptr<KaldiServiceHandler> handler(new KaldiServiceHandler(argvc));
   shared_ptr<TProcessor> processor(new KaldiServiceProcessor(handler));
   shared_ptr<TServerTransport> serverTransport(new TServerSocket(server_port));
   shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
@@ -189,7 +191,7 @@ int main(int argc, char **argv) {
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
  
-	std::cout<<"Starting the automatic speech recognition server on port "<<port<<"..."<<std::endl;
+  std::cout << "Starting the automatic speech recognition server on port " << port << "..." << std::endl;
 	server.serve();
   return 0;
 }

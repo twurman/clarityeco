@@ -31,7 +31,7 @@ int main(int argc, char ** argv){
 		audio_file = argv[1];
 	}
 	else{
-		std::cerr<<"At least provide a input file in .wav format"<<std::endl;
+		cerr << "At least provide a input file in .wav format" << endl;
 		exit(0);
 	}
 	boost::shared_ptr<TTransport> socket(new TSocket("localhost", server_port));
@@ -44,7 +44,7 @@ int main(int argc, char ** argv){
 		string answer;
 	
 		ifstream fin(audio_file.c_str(), ios::binary);
-		if (!fin) std::cerr << "Could not open the file!" << std::endl;
+		if (!fin) cerr << "Could not open the file!" << endl;
 	
 		ostringstream ostrm;
   	ostrm << fin.rdbuf();
@@ -60,9 +60,8 @@ int main(int argc, char ** argv){
 		cout << fixed << setprecision(2) << (double)query_latency / 1000 << endl;
 
 		transport->close();
-	} catch (TException &tx){
+	}catch (TException &tx){
 		cout << "ERROR: " << tx.what() << endl;
 	}
 	return 0;
-
 }
