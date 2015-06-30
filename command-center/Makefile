@@ -17,25 +17,17 @@ QA_DEPENDENCY = ../qa/sirius/
 ASR_DEPENDENCY = ../asr/sirius/
 IMM_DEPENDENCY = ../imm/sirius/
 
-OBJECTS_SERVER = $(QA_DEPENDENCY)gen-cpp/QAService.o \
-		 $(ASR_DEPENDENCY)gen-cpp/KaldiService.o \
-		$(IMM_DEPENDENCY)gen-cpp/ImageMatchingService.o \
-		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o \
-		base64.o
+OBJECTS_SERVER = gen-cpp/QAService.o gen-cpp/KaldiService.o gen-cpp/ImageMatchingService.o \
+		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o
 
-all: thrift dependencies $(TARGET_SERVER)
+all: thrift $(TARGET_SERVER)
 
 thrift: 
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
-
-dependencies:
 	thrift --gen cpp $(QA_DEPENDENCY)qaservice.thrift
 	thrift --gen cpp $(ASR_DEPENDENCY)kaldi.thrift
 	thrift --gen cpp $(IMM_DEPENDENCY)service.thrift
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(QA_DEPENDENCY)gen-cpp/QAService.cpp -o $(QA_DEPENDENCY)gen-cpp/QAService.o
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(ASR_DEPENDENCY)gen-cpp/KaldiService.cpp -o $(ASR_DEPENDENCY)gen-cpp/KaldiService.o
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $(IMM_DEPENDENCY)gen-cpp/ImageMatchingService.cpp -o $(IMM_DEPENDENCY)gen-cpp/ImageMatchingService.o	
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
