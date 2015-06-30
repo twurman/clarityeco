@@ -24,12 +24,9 @@
 // Thrift-generated stubs for RPC handling
 #include "gen-cpp/CommandCenter.h"
 #include "gen-cpp/commandcenter_types.h"
-
-// Thrift-generated stubs for communicating with registered
-// services
-#include "../qa/sirius/gen-cpp/QAService.h"
-#include "../asr/sirius/gen-cpp/KaldiService.h"
-#include "../imm/sirius/gen-cpp/ImageMatchingService.h"
+#include "gen-cpp/QAService.h"
+#include "gen-cpp/KaldiService.h"
+#include "gen-cpp/ImageMatchingService.h"
 
 // Boost libraries
 #include <boost/regex.hpp>
