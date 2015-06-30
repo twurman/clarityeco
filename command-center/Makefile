@@ -13,15 +13,21 @@ LINK_FLAGS =    -L$(BOOST_LIB) \
 
 TARGET_SERVER = ccserver
 
-OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
-		 ../asr/sirius/gen-cpp/KaldiService.o \
-		../imm/sirius/gen-cpp/ImageMatchingService.o \
+QA_DEPENDENCY = ../qa/sirius/gen-cpp/
+ASR_DEPENDENCY = ../asr/sirius/gen-cpp/
+IMM_DEPENDENCY = ../imm/sirius/gen-cpp/
+
+OBJECTS_SERVER = $(QA_DEPENDENCY)QAService.o \
+		 $(ASR_DEPENDENCY)KaldiService.o \
+		$(IMM_DEPENDENCY)ImageMatchingService.o \
 		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o \
 		base64.o
 
 all: thrift $(TARGET_SERVER) $(TARGET_CLIENT)
 
-thrift: cc_thrift fts_thrift
+thrift: 
+	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
+	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
 cc_thrift:
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
@@ -38,16 +44,7 @@ $(TARGET_SERVER): $(OBJECTS_SERVER)
 gen-cpp/%.o : gen-cpp/%.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
-# gen-cpp/commandcenter_types.o : gen-cpp/commandcenter_types.cpp
-# 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
-
 %.o : %.cpp
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
-
-# CmdCenterDaemon.o : CmdCenterDaemon.cpp
-# 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
-
-base64.o : base64.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 clean:
