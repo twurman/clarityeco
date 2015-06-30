@@ -23,7 +23,7 @@ OBJECTS_SERVER = $(QA_DEPENDENCY)gen-cpp/QAService.o \
 		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o \
 		base64.o
 
-all: thrift $(TARGET_SERVER)
+all: thrift dependencies $(TARGET_SERVER)
 
 thrift: 
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
