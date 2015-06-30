@@ -39,8 +39,13 @@ OBJECTS_SERVER = $(CMDOBJECT_SERVER) \
 					../common/store_mat.pb.cc \
 					IMSDaemon.o
 
+all: proto thrift common $(TARGET_SERVER)
+
 proto:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
+
+thrift:
+	thrift --gen cpp service.thrift
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(CXX_FLAGS) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)

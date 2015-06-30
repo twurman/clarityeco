@@ -81,15 +81,15 @@ int main(int argc, char **argv){
 	//Register with the command center 
 	int cmdcenterport = 8081;
 	if (argv[1]) {
-	port = atoi(argv[1]);
+		port = atoi(argv[1]);
 	} else {
-	std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
 	if (argv[2]) {
-	cmdcenterport = atoi(argv[2]);
+		cmdcenterport = atoi(argv[2]);
 	} else {
-	std::cout << "Using default port for cc..." << std::endl;
+		cout << "Using default port for cc..." << endl;
 	}
 
 	// initialize the transport factory
@@ -110,9 +110,9 @@ int main(int argc, char **argv){
 	// initialize the image matching server
 	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
 
-	cout << "Starting the image matching server..." << endl;
+	cout << "Starting the image matching server on port " << port << endl;
 	boost::thread *serverThread = new boost::thread(boost::bind(&TThreadPoolServer::serve, &server));
-
+	cout << "Done..." << endl;
 
 	//register with command center
 	boost::shared_ptr<TTransport> cmdsocket(new TSocket("localhost", cmdcenterport));
@@ -120,17 +120,14 @@ int main(int argc, char **argv){
 	boost::shared_ptr<TProtocol> cmdprotocol(new TBinaryProtocol(cmdtransport));
 	CommandCenterClient cmdclient(cmdprotocol);
 	cmdtransport->open();
-	cout<<"Registering image matching server with command center..."<<endl;
+	cout << "Registering image matching server with command center..." << endl;
 	MachineData mDataObj;
-	mDataObj.name="localhost";
-	mDataObj.port=port;
+	mDataObj.name = "localhost";
+	mDataObj.port = port;
 	cmdclient.registerService("IMM", mDataObj);
 	cmdtransport->close();
 
-
-
 	serverThread->join();
-	// server.serve();
-	cout << "Done..." << endl;
+	
 	return 0;
 }

@@ -140,6 +140,7 @@ Mat exec_desc(const Mat &img, DescriptorExtractor *extractor,
 }
 
 void exec_match(po::variables_map &vm) {
+  cout << "Matching image..." << endl;
   assert(vm.count("database"));
   assert(vm.count("debug"));
   debug = vm["debug"].as<int>();
@@ -267,7 +268,7 @@ void exec_match(po::variables_map &vm) {
   if (debug > 0)
     cout << "Best match: " << trainImgs[bestIdx] << " Score: " << bestScore
          << endl;
-  cout << trainImgs[bestIdx] << endl;
+  cout << "Found match" << endl;
 
   // Clean up
   delete detector;
@@ -359,9 +360,10 @@ void build_model(DescriptorMatcher *matcher, vector<string> *trainImgs){
 }
 
 string exec_match(string img_path, DescriptorMatcher *matcher, vector<string> *trainImgs){
+  cout << "Matching image..." << endl;
 	// data
 	int debug = 0;
-	int analyze = 1;
+	int analyze = 0;
 	Mat testImg;
 	Mat testDesc;
 	vector<vector<DMatch> > knnMatches;
@@ -426,7 +428,7 @@ string exec_match(string img_path, DescriptorMatcher *matcher, vector<string> *t
 
 	if (debug > 0)
 		cout << "Best match: " << trainImgs->at(bestIdx) << " Score: " << bestScore << endl;
-	//cout << trainImgs[bestIdx] << endl;
+	cout << "Found match" << endl;
 
   	// Clean up
 	delete detector;

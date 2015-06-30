@@ -38,8 +38,13 @@ OBJECTS_SERVER = ./gen-cpp/ImageMatchingService.o \
 GEN_DIR = ./gen-cpp
 COMMON_DIR = ../common
 
+all: proto thrift common $(TARGET_SERVER) $(TARGET_CLIENT)
+
 proto:
 	$(PROTO) --proto_path=$(COMMON_DIR) --cpp_out=$(COMMON_DIR) $(wildcard $(COMMON_DIR)/*.proto)
+
+thrift:
+	thrift --gen cpp service.thrift
 
 $(TARGET_CLIENT): $(OBJECTS_CLIENT)
 	$(CXX) $(CXX_FLAGS) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LINK_FLAGS)

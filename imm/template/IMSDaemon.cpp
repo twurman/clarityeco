@@ -70,9 +70,9 @@ private:
 int main(int argc, char **argv){
 	int port = 9082;
 	if (argv[1]) {
-	port = atoi(argv[1]);
+		port = atoi(argv[1]);
 	} else {
-	std::cout << "Using default port for imm..." << std::endl;
+		cout << "Using default port for imm..." << endl;
 	}
 
 	// initialize the transport factory
@@ -93,8 +93,8 @@ int main(int argc, char **argv){
 	// initialize the image matching server
 	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
 
-	cout << "Starting the image matching server..." << endl;
+	cout << "Starting the image matching server on port " << port << endl;
 	server.serve();
-	cout << "Done..." << endl;
+
 	return 0;
 }
