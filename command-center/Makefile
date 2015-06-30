@@ -1,30 +1,18 @@
-CXX = g++
-CXX_FLAGS = -I/usr/local/boost_1_58_0
+include ../Makefile.config
 
-LINK_FLAGS =    -L/usr/local/boost_1_58_0/stage/lib \
-				-lopencv_core \
-				-lopencv_highgui \
-				-lopencv_imgproc \
-				-lopencv_nonfree \
-				-lopencv_flann \
-				-lopencv_objdetect \
-				-lopencv_features2d \
-				-lopencv_gpu \
-				-lrt \
+CXX = g++
+CXX_FLAGS = -I$(BOOST_LOCATION)
+
+LINK_FLAGS =    -L$(BOOST_LIB) \
 				-lboost_program_options \
 				-lboost_filesystem \
 				-lboost_system \
 				-lboost_thread \
 				-lboost_regex \
-				-lprotobuf \
-				-ltesseract \
-				-lthrift \
-				-pthread
+				-lthrift
 
-TARGET_CLIENT = ccclient
 TARGET_SERVER = ccserver
 
-OBJECTS_CLIENT = gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterClient.o
 OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
 		 ../asr/sirius/gen-cpp/KaldiService.o \
 		../imm/sirius/gen-cpp/ImageMatchingService.o \
