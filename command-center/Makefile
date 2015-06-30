@@ -19,7 +19,9 @@ OBJECTS_SERVER = ../qa/sirius/gen-cpp/QAService.o \
 		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o \
 		base64.o
 
-all: cc_thrift fts_thrift $(TARGET_SERVER) $(TARGET_CLIENT)
+all: thrift $(TARGET_SERVER) $(TARGET_CLIENT)
+
+thrift: cc_thrift fts_thrift
 
 cc_thrift:
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
@@ -33,17 +35,17 @@ $(TARGET_CLIENT): $(OBJECTS_CLIENT)
 $(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
-gen-cpp/CommandCenter.o : gen-cpp/CommandCenter.cpp
+gen-cpp/%.o : gen-cpp/%.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
-gen-cpp/commandcenter_types.o : gen-cpp/commandcenter_types.cpp
+# gen-cpp/commandcenter_types.o : gen-cpp/commandcenter_types.cpp
+# 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+
+%.o : %.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
-CmdCenterClient.o : CmdCenterClient.cpp
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
-
-CmdCenterDaemon.o : CmdCenterDaemon.cpp
-	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
+# CmdCenterDaemon.o : CmdCenterDaemon.cpp
+# 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
 
 base64.o : base64.cpp
 	$(CXX) -c $(CXX_FLAGS) $(EXTRA_FLAGS) $< -o $@
