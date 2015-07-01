@@ -34,6 +34,7 @@ thrift_cc:
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
+	sleep 1
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 gen-cpp/%.o : gen-cpp/%.cpp
