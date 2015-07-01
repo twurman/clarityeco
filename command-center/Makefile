@@ -33,8 +33,7 @@ thirft_cc:
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
-$(TARGET_SERVER): $(OBJECTS_SERVER)
-	thrift
+$(TARGET_SERVER): thrift $(OBJECTS_SERVER)
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 gen-cpp/%.o : gen-cpp/%.cpp
