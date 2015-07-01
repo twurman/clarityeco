@@ -26,7 +26,7 @@ all:
 	thrift --gen cpp $(IMM_DEPENDENCY)service.thrift
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
-	$(TARGET_SERVER)
+	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 thrift: thrift_dep thrift_cc $(TARGET_SERVER)
 
