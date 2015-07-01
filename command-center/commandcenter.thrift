@@ -33,9 +33,6 @@ service CommandCenter
 	# command center <--> client API
 	string handleRequest(1:QueryData data),
 
-	# deprecated
-	string askTextQuestion(1:string question),
-
 	# simple function to test connections
 	void ping()
 }

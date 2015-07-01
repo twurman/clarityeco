@@ -12,6 +12,7 @@ public:
 		registeredServices = std::multimap<std::string, ServiceData*>();
 	}
 
+	//allows services to register with the command center
 	virtual void registerService(const std::string& serviceType, const MachineData& mDataObj)
 	{
 		cout << "/-----registerService()-----/" << endl;
@@ -32,6 +33,7 @@ public:
 		}
 	}
 
+	//receives requests from a client and determines the workflow needed to process the request 
 	virtual void handleRequest(std::string& _return, const QueryData& data)
 	{
 		cout << "/-----handleRequest()-----/" << endl;
@@ -148,38 +150,6 @@ public:
 
 	}
 
-	virtual void askTextQuestion(std::string& _return, const std::string& question)
-	{
-		cout << "Command Center: askTextQuestion()" << endl;
-		// TODO: this is hard-coded; make this extensible
-		int serverPort = 9091;
-		boost::shared_ptr<TTransport> socket(new TSocket("localhost", serverPort));
-		boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
-		boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
-		QAServiceClient client(protocol);
-		try
-		{
-			// Extract question from input
-			std::string answer;
-
-			transport->open();
-			
-			// Ask question
-			client.askFactoidThrift(answer, question);
-			
-			// Report response
-			cout << "Command Center forwarded the question successfully..." << endl;
-			cout << "ANSWER = " << answer << endl;
-			cout << endl;
-			transport->close();
-		}
-		catch (TException &tx)
-		{
-			cout << "COMMAND CENTER ERROR: " << tx.what() << endl;
-		}
-
-	}
-
 	void ping()
 	{
 		cout << "ping!" << endl;
@@ -192,7 +162,6 @@ private:
 	boost::thread heartbeatThread;
 
 	ServiceData* assignService(const std::string type) {
-		//load balancer for service assignment
 		std::multimap<std::string, ServiceData*>::iterator it;
 		it = registeredServices.find(type);
 		if (it != registeredServices.end()) {
@@ -241,8 +210,7 @@ std::string parseImgFile(const std::string& immRetVal)
 {
 	// Everything must be escaped twice
 	const char *regexPattern = "\\A(/?)([\\w\\-]+/)*([\\w\\-]+)(\\.jpg)\\z";
-	std::cout << "Passing the following pattern to regex engine: "
-		<< regexPattern << std::endl;
+	std::cout << "Passing the following pattern to regex engine: " << regexPattern << std::endl;
 	boost::regex re(regexPattern);
 	std::string fmt("$3");
 	std::string outstr = immRetVal;
