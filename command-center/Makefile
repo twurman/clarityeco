@@ -20,7 +20,7 @@ IMM_DEPENDENCY = ../imm/sirius/
 OBJECTS_SERVER = gen-cpp/QAService.o gen-cpp/KaldiService.o gen-cpp/ImageMatchingService.o \
 		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o
 
-all: thrift_dep thirft_cc $(TARGET_SERVER)
+all: $(TARGET_SERVER)
 
 thrift: thrift_dep thirft_cc
 
@@ -34,6 +34,7 @@ thirft_cc:
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
 $(TARGET_SERVER): $(OBJECTS_SERVER)
+	thrift
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 gen-cpp/%.o : gen-cpp/%.cpp
