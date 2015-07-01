@@ -17,10 +17,10 @@ QA_DEPENDENCY = ../qa/sirius/
 ASR_DEPENDENCY = ../asr/sirius/
 IMM_DEPENDENCY = ../imm/sirius/
 
-OBJECTS_SERVER = gen-cpp/QAService.o gen-cpp/KaldiService.o gen-cpp/ImageMatchingService.o \
-		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o
+OBJECTS_SERVER = gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o \
+		gen-cpp/QAService.o gen-cpp/KaldiService.o gen-cpp/ImageMatchingService.o
 
-all: $(TARGET_SERVER)
+all: thrift $(TARGET_SERVER)
 
 thrift: thrift_dep thirft_cc
 
@@ -33,7 +33,7 @@ thirft_cc:
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift
 
-$(TARGET_SERVER): thrift $(OBJECTS_SERVER)
+$(TARGET_SERVER): $(OBJECTS_SERVER)
 	$(CXX) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LINK_FLAGS)
 
 gen-cpp/%.o : gen-cpp/%.cpp
