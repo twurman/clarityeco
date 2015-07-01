@@ -23,7 +23,7 @@ make
 You can use the supplied Sirius services in the clarity ecosystem in conjunction with the command center. These services (asr, qa, imm) are in each services sirius/ subdirectory. The command center must be compiled before you can compile the sirius versions of these services.
 
 
-### Running with SiriusMobile v0.1
+##Running with SiriusMobile v0.1
 The current implementation of the mobile application requires a node.js server as an intermediary between the mobile app and the command center. To run this node server, you must have node installed on your machine as well as npm.
 1) Download the thrift node packages in the command-center/ folder using
 ```
