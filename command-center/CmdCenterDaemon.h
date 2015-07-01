@@ -24,12 +24,9 @@
 // Thrift-generated stubs for RPC handling
 #include "gen-cpp/CommandCenter.h"
 #include "gen-cpp/commandcenter_types.h"
-
-// Thrift-generated stubs for communicating with registered
-// services
-#include "../qa/sirius/gen-cpp/QAService.h"
-#include "../asr/sirius/gen-cpp/KaldiService.h"
-#include "../imm/sirius/gen-cpp/ImageMatchingService.h"
+#include "gen-cpp/QAService.h"
+#include "gen-cpp/KaldiService.h"
+#include "gen-cpp/ImageMatchingService.h"
 
 // Boost libraries
 #include <boost/regex.hpp>
@@ -113,31 +110,6 @@ public:
 	: ServiceData(sd), client(protocol), img("") {}
 	ImageMatchingServiceClient client;
 	std::string img;
-};
-
-class ResponseData
-{
-public:
-	ResponseData(std::string _response)
-	: response(_response) {}
-	std::string getResponse() { return response; }
-private:
-	// could be audio transcript, answer, or matched img name
-	std::string response;
-};
-
-class AsrWorker
-{
-public:
-	void execute(void *arg);
-	std::string returnValue;
-};
-
-class ImmWorker
-{
-public:
-	void execute(void *arg);
-	std::string returnValue;
 };
 
 #endif
