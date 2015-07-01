@@ -6,11 +6,15 @@
 
 
 ##Starting the command center:
-1) Compile the command center
+1) Compile the thrift files
+```
+make thrift
+```
+2) Compile the command center
 ```
 make
 ```
-2) Start the command center
+3) Start the command center
 ```
 ./ccserver <port>
 ```
