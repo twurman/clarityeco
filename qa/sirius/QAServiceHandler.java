@@ -22,6 +22,7 @@ public class QAServiceHandler implements QAService.Iface {
    * the end-to-end OpenEphyra framework.
    */
   private OpenEphyra oe;
+  private String defaultAnswer;
 
   /** Constructs the handler and initializes its OpenEphyra
    * object.
@@ -33,6 +34,7 @@ public class QAServiceHandler implements QAService.Iface {
     MsgPrinter.enableErrorMsgs(true);
 
     oe = new OpenEphyra(dir);
+    defaultAnswer = "Sorry. I'm not at liberty to disclose this information.";
   }
 
   /** Forwards the client's question to the OpenEphyra object's askFactoid
@@ -43,7 +45,10 @@ public class QAServiceHandler implements QAService.Iface {
     MsgPrinter.printStatusMsg("askFactoidThrift(): Arg = " + question);
     
     Result result = oe.askFactoid(question);
-    String answer = result.getAnswer();
+    String answer = defaultAnswer;
+    if (result != null) {
+      answer = result.getAnswer();
+    }
 
     return answer;
   }
@@ -59,9 +64,13 @@ public class QAServiceHandler implements QAService.Iface {
 
     Result[] results = oe.askList(question, relThresh);
     List<String> answersList = new ArrayList<String>();
-    // add all answers to answersList
-    for (Result r : results) {
-      answersList.add(r.getAnswer());
+    if (results.length > 0) {
+      // add all answers to answersList
+      for (Result r : results) {
+        answersList.add(r.getAnswer());
+      }
+    } else {
+      answersList.add(defaultAnswer);
     }
     return answersList;
   }
