@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This sentiment analysis code is initially adapted by: Chang-Hong Hsu (hsuch@umich.edu).Thrift support as well as logging is added to transform into a service by: Hailong Yang (hailong@umich.edu). Current version is using NLTK hooks to plugin Senna performing POS of the sentences.
+This sentiment analysis code is initially adapted by: Chang-Hong Hsu (hsuch@umich.edu) from (http://fjavieralba.com/basic-sentiment-analysis-with-python.html). Thrift support as well as logging is added to transform into a service by: Hailong Yang (hailong@umich.edu). Current version is using NLTK hooks to plugin Senna performing POS of the sentences.
 
 """
 
@@ -10,7 +10,6 @@ import yaml
 import sys, glob
 import logging
 sys.path.append('gen-py')
-sys.path.insert(0, glob.glob('lib/py/lib.*')[0])
 
 import os
 import re
