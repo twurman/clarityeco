@@ -45,7 +45,10 @@ public class QAServiceHandler implements QAService.Iface {
     MsgPrinter.printStatusMsg("askFactoidThrift(): Arg = " + question);
     
     Result result = oe.askFactoid(question);
-    String answer = result.getAnswer();
+    String answer = "Sorry. I'm not at liberty to disclose this information.";
+    if (result != null) {
+      answer = result.getAnswer();
+    }
 
     return answer;
   }
