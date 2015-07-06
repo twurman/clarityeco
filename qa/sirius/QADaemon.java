@@ -90,11 +90,11 @@ public class QADaemon {
    * @param port the port at which the question-answer service will listen.
    * @param cmdcenterport the port at which the sirius service is listening.
    */
-  public static void simple(QAService.Processor processor, int port, int cmdcenterport) {
+  public static void simple(QAService.Processor processor, final int port, final int cmdcenterport) {
     try {
       // Start the question-answer server
       TServerTransport serverTransport = new TServerSocket(port);
-      TServer server = new TSimpleServer(
+      final TServer server = new TSimpleServer(
           new Args(serverTransport).processor(processor));
       
       Thread t1 = new Thread(new Runnable() {
