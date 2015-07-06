@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+# Datasets/databases/other
+*.pb.*
+*.pb
+*.pickle
