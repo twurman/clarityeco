@@ -1,7 +1,8 @@
 #include "CmdCenterDaemon.h"
 
 //---- Utilities ----//
-std::string parseImgFile(const std::string& immRetVal);
+string parseImgFile(const string& immRetVal);
+string parseDecodedAudio(const string& asrRetVal);
 
 class CommandCenterHandler : public CommandCenterIf
 {
@@ -9,11 +10,11 @@ public:
 	// ctor: initialize command center's tables
 	CommandCenterHandler()
 	{
-		registeredServices = std::multimap<std::string, ServiceData*>();
+		registeredServices = multimap<string, ServiceData*>();
 	}
 
 	//allows services to register with the command center
-	virtual void registerService(const std::string& serviceType, const MachineData& mDataObj)
+	virtual void registerService(const string& serviceType, const MachineData& mDataObj)
 	{
 		cout << "/-----registerService()-----/" << endl;
 		cout << "received request from " << mDataObj.name
@@ -21,12 +22,12 @@ public:
 		     << endl;
 
 		registeredServices.insert( 
-			std::pair<std::string, ServiceData*>(serviceType, new ServiceData(mDataObj.name, mDataObj.port))
+			pair<string, ServiceData*>(serviceType, new ServiceData(mDataObj.name, mDataObj.port))
 		);
 	
 		cout << "There are now " << registeredServices.size() << " registered services" << endl;
 		cout << "LIST OF REGISTERED SERVICES:" << endl;
-		std::multimap<std::string, ServiceData*>::iterator it;
+		multimap<string, ServiceData*>::iterator it;
 		for (it = registeredServices.begin(); it != registeredServices.end(); ++it)
 		{
 			cout << "\t" << it->first << endl;
@@ -34,12 +35,12 @@ public:
 	}
 
 	//receives requests from a client and determines the workflow needed to process the request 
-	virtual void handleRequest(std::string& _return, const QueryData& data)
+	virtual void handleRequest(string& _return, const QueryData& data)
 	{
 		cout << "/-----handleRequest()-----/" << endl;
 
 		//---- Transform data into a form the services can use ----//
-		std::string binary_audio, binary_img;
+		string binary_audio, binary_img;
 		if(data.audioB64Encoding) {
 			cout << "Decoding audio..." << endl;
 			binary_audio = base64_decode(data.audioData);	
@@ -101,15 +102,16 @@ public:
 		}
 
 		//---- Run pipeline ----//
-		std::string asrRetVal = "";
-		std::string immRetVal = "";
-		std::string question = "";
+		string asrRetVal = "";
+		string immRetVal = "";
+		string question = "";
 		if ((data.audioData != "") && (data.imgData != ""))
 		{
 			cout << "Starting IMM-ASR-QA pipeline..." << endl;
 			asr->transport->open();
 			asr->client.kaldi_asr(asrRetVal, binary_audio);
 			asr->transport->close();
+			asrRetVal = parseDecodedAudio(asrRetVal);
 
 			imm->transport->open();
 			imm->client.send_request(immRetVal, binary_img);
@@ -127,6 +129,7 @@ public:
 			asr->transport->open();
 			asr->client.kaldi_asr(asrRetVal, binary_audio);
 			asr->transport->close();
+			asrRetVal = parseDecodedAudio(asrRetVal);
 
 			qa->transport->open();
 			qa->client.askFactoidThrift(_return, asrRetVal);
@@ -160,11 +163,11 @@ public:
 private:
 	// registeredServices: a table of all servers that registered with
 	// the command center via the registerService() method
-	std::multimap<std::string, ServiceData*> registeredServices;
+	multimap<string, ServiceData*> registeredServices;
 	boost::thread heartbeatThread;
 
-	ServiceData* assignService(const std::string type) {
-		std::multimap<std::string, ServiceData*>::iterator it;
+	ServiceData* assignService(const string type) {
+		multimap<string, ServiceData*>::iterator it;
 		it = registeredServices.find(type);
 		if (it != registeredServices.end()) {
 			return it->second;
@@ -208,26 +211,70 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-std::string parseImgFile(const std::string& immRetVal)
+string parseImgFile(const string& immRetVal)
 {
 	// Everything must be escaped twice
 	const char *regexPattern = "\\A(/?)([\\w\\-]+/)*([\\w\\-]+)(\\.jpg)\\z";
-	std::cout << "Passing the following pattern to regex engine: " << regexPattern << std::endl;
+	cout << "Passing the following pattern to regex engine: " << regexPattern << endl;
 	boost::regex re(regexPattern);
-	std::string fmt("$3");
-	std::string outstr = immRetVal;
+	string fmt("$3");
+	string outstr = immRetVal;
 	if (boost::regex_match(immRetVal, re))
 	{
-		std::cout << immRetVal << " matches pattern"  << std::endl;
+		cout << immRetVal << " matches pattern"  << endl;
 		outstr = boost::regex_replace(immRetVal, re, fmt);
-		std::cout << "Input: " << immRetVal << std::endl;
-		std::cout << "Result: " << outstr << std::endl;
+		cout << "Input: " << immRetVal << endl;
+		cout << "Result: " << outstr << endl;
 	}
 	else
 	{
-		std::cout << "No match for " << immRetVal << "..." << std::endl;
+		cout << "No match for " << immRetVal << "..." << endl;
 		throw(BadImgFileException());
 	}
 
 	return outstr;
+}
+
+string parseDecodedAudio(const string& asrRetVal)
+{
+	// NOTE: pattern uh-huh matches [uh-huh];
+	// pattern (uh-huh|uh) matches [uh-huh];
+	// pattern (uh|uh-huh) matches [uh]-h[uh].
+	const string fillerWords = "(mhm|mm|yeah|Uh-huh|uh-huh|uh|ah|\\[noise\\]|\\[laughter\\])";
+	const string leading = " " + fillerWords;
+	const string trailing = fillerWords + " ";
+	const string both = " " + fillerWords + " ";
+	const string fillerWordPattern = leading + "|" + trailing + "|" + both; 
+	const string conjAtStart = "^(but|so)(, | )";
+	const string repeatedWordAtStart = "^([^ ]* )(\\1)";
+	const string extraSpace = "( ){2,}";
+	string fmtFillers = "";
+	string fmtSo = "";
+	string fmtRepeats = "$2";
+	string fmtSpace = " ";
+
+	cout << "Passing the following patterns to regex engine: "
+		<< fillerWordPattern << endl << conjAtStart << endl
+		<< repeatedWordAtStart << extraSpace << endl;
+	boost::regex fw_re(fillerWordPattern);
+	boost::regex cs_re(conjAtStart);
+	boost::regex rw_re(repeatedWordAtStart);
+	boost::regex exsp_re(extraSpace);
+
+	// Changing the order in which the filters are applied
+	// WILL change the quality of the parsing.
+	string outstr = asrRetVal;
+	cout << "Input: " << outstr << endl;
+	outstr = boost::regex_replace(
+		outstr, fw_re, fmtFillers);
+	outstr = boost::regex_replace(
+		outstr, cs_re, fmtSo);
+	outstr = boost::regex_replace(
+		outstr, rw_re, fmtRepeats);
+	outstr = boost::regex_replace(
+		outstr, exsp_re, fmtSpace);
+	cout << "Result: " << outstr << endl;
+
+	return outstr;
+
 }
