@@ -17,9 +17,11 @@ TARGET_CLIENT = ccclient
 QA_DEPENDENCY = ../qa/sirius/
 ASR_DEPENDENCY = ../asr/sirius/
 IMM_DEPENDENCY = ../imm/sirius/
+AUDIO_DEPENDENCY = ../audio_conv/sirius/
 
 OBJECTS_SERVER = gen-cpp/QAService.o gen-cpp/KaldiService.o gen-cpp/ImageMatchingService.o \
-		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o
+		gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterDaemon.o base64.o \
+		gen-cpp/AudioService.o
 OBJECTS_CLIENT = gen-cpp/CommandCenter.o gen-cpp/commandcenter_types.o CmdCenterClient.o
 
 all: thrift $(TARGET_SERVER) $(TARGET_CLIENT)
@@ -30,7 +32,7 @@ thrift_dep:
 	thrift --gen cpp $(QA_DEPENDENCY)qaservice.thrift
 	thrift --gen cpp $(ASR_DEPENDENCY)kaldi.thrift
 	thrift --gen cpp $(IMM_DEPENDENCY)service.thrift
-	
+	thrift --gen cpp $(AUDIO_DEPENDENCY)audio.thrift
 thrift_cc:
 	thrift --gen cpp --gen java --gen js:node commandcenter.thrift
 	thrift --gen cpp --gen js:node filetransfer_svc.thrift

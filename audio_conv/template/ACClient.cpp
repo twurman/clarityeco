@@ -50,7 +50,7 @@ int main(int argc, char ** argv){
 		string audio_file_to_send(ostrm.str());
 		transport->open();
 		gettimeofday(&tv1, NULL);
-		client.audio_conversion(answer,audio_file, audio_file_to_send);
+		client.audio_conversion(answer, audio_file_to_send);
 		gettimeofday(&tv2, NULL);
 		unsigned int query_latency = (tv2.tv_sec - tv1.tv_sec) * 1000000 + (tv2.tv_usec - tv1.tv_usec);	
 	  std::string audio_path = "converted.wav";

@@ -77,11 +77,11 @@ void KaldiServiceHandler::kaldi_asr(std::string& _return, const std::string& aud
   std::cout << "Audio File Recieved..."<< std::endl;
 
   std::cout << "Converting audio file...." << std::endl;
-  sox();//Running SOX
+//  sox();//Running SOX
   std::cout << "Converting audio file complete..." << std::endl;
 
   std::cout << "Running Kaldi Algorithm..."<< std::endl;
-  kaldi.stdin << "inputserver1.wav"  << std::endl;//Giving the audio file via stdin (pipes)
+  kaldi.stdin << "inputserver.wav"  << std::endl;//Giving the audio file via stdin (pipes)
   getline(kaldi.stdout, answer);//Grabbing the answer	
   std::cout << "Finished Running Kaldi Algorithm..."<< std::endl;	
   std::cout << "Now Returing Answer: "<<answer<< std::endl;

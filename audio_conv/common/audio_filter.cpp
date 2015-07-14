@@ -44,9 +44,7 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
 
     // Set the filter options through the AVOptions API. 
     av_get_channel_layout_string(ch_layout, sizeof(ch_layout), 0, dec_ctx->channel_layout);
-    std::cout<<"Channel Layout Insider filter: "<<ch_layout<<std::endl;
 
-    std::cout<<"Channel Layout Insider filter: "<<dec_ctx->channel_layout<<std::endl;
 
     av_opt_set      (abuffer_ctx, "channel_layout", ch_layout, AV_OPT_SEARCH_CHILDREN);
 
@@ -58,7 +56,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
 
     av_opt_set_int  (abuffer_ctx, "sample_rate",    dec_ctx->sample_rate,  
                                                     AV_OPT_SEARCH_CHILDREN);
-    std::cout<<"I am here"<<std::endl;
     // Now initialize the filter; we pass NULL options, since we have already
     // set all the options above. 
     err = avfilter_init_str(abuffer_ctx, NULL);
@@ -67,7 +64,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here2"<<std::endl;
     // Create volume filter. 
     volume = avfilter_get_by_name("volume");
     if (!volume) {
@@ -75,14 +71,12 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return AVERROR_FILTER_NOT_FOUND;
     }
 
-    std::cout<<"I am here3"<<std::endl;
     volume_ctx = avfilter_graph_alloc_filter(filter_graph, volume, "volume");
     if (!volume_ctx) {
         fprintf(stderr, "Could not allocate the volume instance.\n");
         return AVERROR(ENOMEM);
     }
 
-    std::cout<<"I am here4"<<std::endl;
     // A different way of passing the options is as key/value pairs in a
     // dictionary. 
     av_dict_set(&options_dict, "volume", AV_STRINGIFY(0.90), 0);
@@ -93,7 +87,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here5"<<std::endl;
     /* Create the aformat filter;
      * it ensures that the output is of the format we want. */
     aformat = avfilter_get_by_name("aformat");
@@ -102,14 +95,12 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return AVERROR_FILTER_NOT_FOUND;
     }
 
-    std::cout<<"I am here6"<<std::endl;
     aformat_ctx = avfilter_graph_alloc_filter(filter_graph, aformat, "aformat");
     if (!aformat_ctx) {
         fprintf(stderr, "Could not allocate the aformat instance.\n");
         return AVERROR(ENOMEM);
     }
 
-    std::cout<<"I am here7"<<std::endl;
     /* A third way of passing the options is in a string of the form
      * key1=value1:key2=value2.... */
     snprintf(options_str, sizeof(options_str),
@@ -122,7 +113,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here8"<<std::endl;
     /* Finally create the abuffersink filter;
      * it will be used to get the filtered data out of the graph. */
     abuffersink = avfilter_get_by_name("abuffersink");
@@ -131,14 +121,12 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return AVERROR_FILTER_NOT_FOUND;
     }
 
-    std::cout<<"I am here9"<<std::endl;
     abuffersink_ctx = avfilter_graph_alloc_filter(filter_graph, abuffersink, "sink");
     if (!abuffersink_ctx) {
         fprintf(stderr, "Could not allocate the abuffersink instance.\n");
         return AVERROR(ENOMEM);
     }
 
-    std::cout<<"I am here10"<<std::endl;
     /* This filter takes no options. */
     err = avfilter_init_str(abuffersink_ctx, NULL);
     if (err < 0) {
@@ -146,7 +134,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here11"<<std::endl;
     /* Connect the filters;
      * in this simple case the filters just form a linear chain. */
     err = avfilter_link(abuffer_ctx, 0, volume_ctx, 0);
@@ -159,7 +146,6 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here12"<<std::endl;
     /* Configure the graph. */
     err = avfilter_graph_config(filter_graph, NULL);
     if (err < 0) {
@@ -167,11 +153,10 @@ int Audio_Service::init_audio_filter(AVCodecContext * dec_ctx, AVCodecContext * 
         return err;
     }
 
-    std::cout<<"I am here"<<std::endl;
     *graph = filter_graph;
     *src   = abuffer_ctx;
     *sink  = abuffersink_ctx;
 
-    std::cout<<"I am here"<<std::endl;
+    std::cout<<"Sucessfully filtered"<<std::endl;
     return 0;
 }

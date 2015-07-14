@@ -22,20 +22,28 @@ class AudioServiceHandler : virtual public AudioServiceIf {
     // Your initialization goes here
   }
 
-  void audio_conversion(std::string& _return, const std::string& in_filename, const std::string& audio) {
+  void audio_conversion(std::string& _return, const std::string& audio) {
     // Your implementation goes here
     Audio_Service test;
-    _return = test.conversion(in_filename, audio);
+    _return = test.conversion(audio);
     printf("audio_conversion\n");
   }
 
 };
 
 int main(int argc, char **argv) {
-  int port = 9090;
+  //Creating a Server port
+  int server_port = 9090;
+  if(argc == 2){
+     server_port = atoi(argv[1]);
+     std::cout<< "Using port "<<server_port<<" for audio conversion"<<std::endl;
+  }  
+  else{
+    std::cout<< "Using default port "<<server_port<<" for audio conversion"<<std::endl;
+  }
   shared_ptr<AudioServiceHandler> handler(new AudioServiceHandler());
   shared_ptr<TProcessor> processor(new AudioServiceProcessor(handler));
-  shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+  shared_ptr<TServerTransport> serverTransport(new TServerSocket(server_port));
   shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
   shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 

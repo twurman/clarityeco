@@ -4,28 +4,38 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <sys/time.h>
+#include <cstdlib>
 
-//WARNING: I CAN GUARNTEE YOU THAT THERE ARE MEMORY LEAKS!!!!!!
-//will fix as soon as possible
 
-
-//This function take the name of the file because of the extension 
-//and also its data in the form of a string. 
-std::string Audio_Service::conversion(std::string in_filename, std::string audio){
-  
-  std::ofstream audiofile (in_filename.c_str(), std::ios::binary);
+std::string Audio_Service::conversion(const std::string audio){
+  struct timeval tp;
+  gettimeofday(&tp,NULL);
+  long int timestamp = tp.tv_sec * 100 + tp.tv_usec / 1000;
+  std::string audio_path = "input-"+ std::to_string(timestamp);
+  std::ofstream audiofile(audio_path.c_str(), std::ios::binary);
   audiofile.write(audio.c_str(), audio.size());
   audiofile.close();
-  
-  std::string out_filename = "test.wav";
+
+  std::string audio_outfile = "output-" + std::to_string(timestamp)+".wav";
+
   int ret;
   int got_pkt;
+  int got_frame=0;
+  int finished=0;
+  
+  AVFrame *frame;
+  AVFrame *filteredFrame;
+  AVPacket pkt;
   //Initialize all codecs
   av_register_all();
 
   //Initial the filters
   avfilter_register_all();
 
+  //FFMPEG Wapper in a class
+ // Audio_Service test;
+  
   //Input File info 
   AVFormatContext * ifmt_ctx=NULL;
   AVCodecContext *dec_ctx=NULL;
@@ -41,73 +51,100 @@ std::string Audio_Service::conversion(std::string in_filename, std::string audio
   AVFilterContext * src;
 
   //Exit point for graph
-  AVFilterContext * sink;
+   AVFilterContext * sink;
 
   //Open the input file for demuxing and decoding
-  open_input_file(in_filename.c_str(),&ifmt_ctx,&dec_ctx);
+  open_input_file(audio_path.c_str(),&ifmt_ctx,&dec_ctx);
 
   //Dump input file info to cerr
-  file_info(in_filename.c_str(),ifmt_ctx);
+ // file_info(audio_path.c_str(),ifmt_ctx);
 
   //Open the output file and setup the output format and codec ctx
-  open_output_file(out_filename.c_str(), ifmt_ctx, &ofmt_ctx, &enc_ctx);
-  //test.open_output_file(argv[2]);
-  //Decode the input file
-  decode(ifmt_ctx,dec_ctx);
+  open_output_file(audio_outfile.c_str(), ifmt_ctx, &ofmt_ctx, &enc_ctx);
+  //test.open_output_file(audio_outfile);
 
   //Initial Filter Graph 
   init_audio_filter(dec_ctx,enc_ctx,&graph,&src,&sink);
-
-  AVFrame * frame;
-  AVPacket pkt;
   init_packet(&pkt);
-  // the main filtering loop 
-  for (;!decode_queue.empty();) {
-    frame = decode_queue.front();
-    // Send the frame to the input of the filtergraph. 
-    ret = av_buffersrc_add_frame(src, frame);
-    if (ret < 0) {
-      av_frame_unref(frame);
-      fprintf(stderr, "Error submitting the frame to the filtergraph: \n");
-      exit(1);
+  init_frame(&frame);
+  //Main loop 
+  while(!finished){
+    //Grab one audio frame
+    if(decode_audio_frame(ifmt_ctx,dec_ctx,&frame,&got_frame,&finished)<0){
+      std::cerr << "Error Decoding Audio" <<std::endl;
     }
-    
-    // Get all the filtered output that is available. 
-    while ((ret = av_buffersink_get_frame(sink, frame)) >= 0) {
-      // now do something with our filtered frame 
-      avcodec_encode_audio2(enc_ctx, &pkt,frame,& got_pkt);    
-      av_interleaved_write_frame(ofmt_ctx, &pkt);  
-      // test.encode_audio_frame(frame,ofmt_ctx,enc_ctx);
+      
+    /**
+     * If we are at the end of the file and there are no more samples
+     * in the decoder which are delayed, we are actually finished.
+     * This must not be treated as an error.
+     */
+    if (finished && !got_frame) {
+      break;
+    }
+
+    if(got_frame){
+      //Add the frame to the filter
+      ret=av_buffersrc_add_frame(src,frame);
       if (ret < 0) {
-        fprintf(stderr, "Error processing the filtered frame:");
+        av_frame_unref(frame);
+        std::cerr<< "Error submitting the frame to the filtergraph"<<std::endl;;
         exit(1);
       }
-            av_frame_unref(frame);
-    }
-    decode_queue.pop();
+      
+      //Pull the filtered frame from the graph
+      for(;;){
+        init_frame(&filteredFrame);
+        ret = av_buffersink_get_frame(sink,filteredFrame);
+        if((ret == AVERROR(EAGAIN))|| (ret == AVERROR_EOF)){
+          break;
+        }
+        if(ret<0){
+          std::cerr<<"Error while getting filtered frames from filtergraph"<<std::endl;;
+          return "error occured with filtering";
+        }  
 
-    if (ret == AVERROR(EAGAIN)) {
-      // Need to feed more frames in. 
-      continue;
-    } 
-    else if (ret == AVERROR_EOF) {
-      // Nothing more to do, finish. *
-      break;
-    } 
-    else if (ret < 0) {
-      // An error occurred. 
-      fprintf(stderr, "Error filtering the data:");
-      exit(1);
+        //Send the filtered frame to be encoded and written to the file
+        ret=encode_audio_frame(filteredFrame, ofmt_ctx, enc_ctx);
+        if(ret < 0){
+          std::cerr << "Error while encoding frame" << std::endl;
+          av_frame_unref(frame);
+          return "Error occured with encoding";
+        }
+        
+        av_frame_unref(frame);
+
+      }
     }
   }
 
-  std::ifstream converted(out_filename.c_str(), std::ios::binary);
-  std::ostringstream ostrm;
-  ostrm << converted.rdbuf();
-  std::string audio_out(ostrm.str());
-  //av_write_trailer(ofmt_ctx);
-  //avcodec_close(input_codec_ctx);
-  //avformat_close_input(&input_format_ctx);
+  //Flushing the encoder
+  std::cout<<"Flushing the encoder"<<std::endl;
+  got_pkt = 1;
+  while(got_pkt){
+    AVPacket encodedP;
+    init_packet(&encodedP);
+    ret=avcodec_encode_audio2(enc_ctx, &encodedP, NULL,&got_pkt);
+
+    if(got_pkt){
+      if ((ret = av_interleaved_write_frame(ofmt_ctx, &encodedP)) < 0) {
+        std::cerr<< "Could not write frame \n"<<std::endl;
+        av_free_packet(&encodedP);
+        return "error";
+      }
+    }
+    av_free_packet(&encodedP);
+  }
+
+av_write_trailer(ofmt_ctx);
+  avformat_free_context(ofmt_ctx);
+  avcodec_close(dec_ctx);
+  avformat_close_input(&ifmt_ctx);
   //fclose(test.output_file);
+  std::ifstream fin(audio_outfile.c_str(), std::ios::binary);
+  std::ostringstream ostrm;
+  ostrm <<fin.rdbuf();
+  std::string audio_out(ostrm.str());
+  std::cout<<"Now returning converted audio"<<std::endl;
   return audio_out;
 }

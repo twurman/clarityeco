@@ -1,10 +1,9 @@
 #include "audio_conv.h"
 
+
 //This function opens the input file, gathers information about the
 //file and determines the stream index and 
 //decoder for the input file
-
-
 int Audio_Service::open_input_file(const char * filename,
                   AVFormatContext ** input_format_context,
                   AVCodecContext ** input_codec_context){
@@ -56,9 +55,36 @@ int Audio_Service::open_input_file(const char * filename,
   //Sometime ffmpeg can't figure out the channel layout
   (*input_codec_context)->channel_layout = av_get_default_channel_layout((*input_codec_context)->channels);
   
+  std::cout<<"Successfully opened the input file"<<std::endl;  
   return 0;
 }
 
+int Audio_Service::open_output_file(const char * filename){
+  output_file = fopen(filename, "wb");
+    if (!output_file) {
+      fprintf(stderr, "Could not open %s\n",filename );
+      return -1;
+    }
+   return 0;
+}
+
+
+//initialize one data packet for reading or writing. 
+void Audio_Service::init_packet(AVPacket * packet){
+  av_init_packet(packet);
+  // Set the packet data and size so that it is recognized as being empty. 
+  (packet)->data = NULL;
+  (packet)->size = 0;
+}
+
+// Initialize one audio frame for reading from the input file 
+int Audio_Service::init_frame(AVFrame ** frame){
+  if (!((*frame) = av_frame_alloc())) {
+    fprintf(stderr, "Could not allocate input frame\n");
+    return AVERROR(ENOMEM);
+  }
+  return 0;
+}
 
 
 int Audio_Service::open_output_file(const char * filename,
@@ -108,19 +134,23 @@ int Audio_Service::open_output_file(const char * filename,
   (*enc_ctx) -> channels        = av_get_channel_layout_nb_channels((*enc_ctx )-> channel_layout);
   //Just pick a sample_fmt
   (*enc_ctx) -> sample_fmt      = AV_SAMPLE_FMT_S16;//encoder -> sample_fmts[0]; 
-  (*enc_ctx) -> time_base       = (AVRational){1, (*enc_ctx)->sample_rate};
+  
+  //Set the timebase of the file
+  out_stream -> time_base.num =1; 
+
   //Open the encoder for the audio stream to use it later
   ret = avcodec_open2(*enc_ctx,encoder,NULL);
   if(ret < 0){
     std::cerr<<"Could not open codec"<<std::endl;
     return ret;
   }
-  std::cout<<"Frame Size: "<<(dec_ctx)->channel_layout<<std::endl; 
+  
   if((*ofmt_ctx)->oformat->flags & AVFMT_GLOBALHEADER){
     (*enc_ctx)->flags |= CODEC_FLAG_GLOBAL_HEADER;
   }
-
-  av_dump_format(*ofmt_ctx,0,filename,1);
+  
+  //Output some information about the new file
+  //av_dump_format(*ofmt_ctx,0,filename,1);
 
   if (!((*ofmt_ctx)->oformat->flags & AVFMT_NOFILE)) {
     ret = avio_open(&(*ofmt_ctx)->pb, filename, AVIO_FLAG_WRITE);
@@ -130,23 +160,38 @@ int Audio_Service::open_output_file(const char * filename,
     }
   }
 
-  //init muxer, write output file header 
-  ret = avformat_write_header(*ofmt_ctx, NULL);
+  //Removing the Metadata that ffmpeg inserts to create the 44-byte riff header 
+   if(av_dict_set(&(*ofmt_ctx)->metadata,"ISFT",NULL, AV_DICT_IGNORE_SUFFIX)){
+     std::cerr<<"whoops I did it again"<<std::endl;
+   }
+   
+   
+    //init muxer, write output file header 
+ ret = avformat_write_header(*ofmt_ctx,&(*ofmt_ctx)->metadata );
   if (ret < 0) {
-   // av_log(NULL, AV_LOG_ERROR, "Error occurred when opening outp    ut file\n");
+    std::cout<<"-------------------------------------------"<<std::endl;
+    av_log(NULL, AV_LOG_ERROR, "Error occurred when writing header to file\n");
     return ret;
   }
 
+
+  std::cout<<"Successfully opened the output file" <<std::endl;
   return 0;
 }
 
-int Audio_Service::open_output_file(const char * filename){
-  output_file = fopen(filename, "wb");
-    if (!output_file) {
-      fprintf(stderr, "Could not open %s\n",filename );
-      return -1;
-    }
-   return 0;
+/*Wrapper around av_dump_format, which displays info about the file via stdcerr*/
+void Audio_Service::file_info(const char * filename, AVFormatContext * input_format_context){
+  av_dump_format(input_format_context, 0,filename,0);
 }
 
+void Audio_Service::printInputStat (AVCodecContext * dec_ctx){
+ 
+  std::cout<<"Sample Format: "<<dec_ctx->sample_fmt<<std::endl;
+  std::cout<<"BIT RATE: "<<dec_ctx->bit_rate<<std::endl;
+  std::cout<<"SAMPLE RATE: "<<dec_ctx->sample_rate<<std::endl;
+  std::cout<<"CHANNEL LAYOUT: "<<dec_ctx->channel_layout<<std::endl;
+  std::cout<<"CHANNELs: "<<dec_ctx->channels<<std::endl;
+ 
+
+}
 

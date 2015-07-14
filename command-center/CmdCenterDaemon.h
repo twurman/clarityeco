@@ -27,6 +27,7 @@
 #include "gen-cpp/QAService.h"
 #include "gen-cpp/KaldiService.h"
 #include "gen-cpp/ImageMatchingService.h"
+#include "gen-cpp/AudioService.h"
 
 // Boost libraries
 #include <boost/regex.hpp>
@@ -110,6 +111,15 @@ public:
 	: ServiceData(sd), client(protocol), img("") {}
 	ImageMatchingServiceClient client;
 	std::string img;
+};
+
+class AudioServiceData : public ServiceData
+{
+public:
+  AudioServiceData(ServiceData *sd)
+  : ServiceData(sd), client(protocol), audio(""){}
+  AudioServiceClient client;
+  std::string audio;
 };
 
 #endif

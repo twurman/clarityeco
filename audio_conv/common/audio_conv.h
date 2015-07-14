@@ -29,6 +29,7 @@ extern "C" {
 #include <libavfilter/avfilter.h> 
 #include <libavfilter/buffersrc.h> 
 #include <libavfilter/buffersink.h> 
+#include <libavutil/dict.h>
 }
 //#endif
 
@@ -37,8 +38,6 @@ class Audio_Service {
   // Input file Variables 
   // Index of where the stream starts
   int audio_stream_index;            
-  // Queue to store decoded raw frames
-  std::queue<AVFrame * > decode_queue;
 
   // Output file Variables 
   FILE * output_file; 
@@ -72,8 +71,8 @@ class Audio_Service {
   //Decoding
   int decode_audio_frame(AVFormatContext *input_format_context,
                          AVCodecContext * input_codec_context,
-                         AVFrame * frame,AVPacket * pkt, 
-                         int * got_frame, int cached);
+                         AVFrame ** frame, int * got_frame, int *finished);
+
   void decode(AVFormatContext * input_format_context,
               AVCodecContext  * input_codec_context);
   
@@ -84,7 +83,7 @@ class Audio_Service {
                          AVCodecContext *output_codec_context);
 
   //Converting
-  std::string conversion (std::string in_filename, std::string audio);
+  std::string conversion(const std::string audio);
 
   //Misc
   int get_format_from_sample_fmt(const char **fmt,

@@ -37,7 +37,6 @@ public:
 	virtual void handleRequest(std::string& _return, const QueryData& data)
 	{
 		cout << "/-----handleRequest()-----/" << endl;
-
 		//---- Transform data into a form the services can use ----//
 		std::string binary_audio, binary_img;
 		if(data.audioB64Encoding) {
@@ -57,7 +56,8 @@ public:
 		AsrServiceData *asr = NULL;
 		ImmServiceData *imm = NULL;
 		QaServiceData *qa = NULL;
-		//---- Kaldi speech recognition client
+		AudioServiceData *audio=NULL;
+    //---- Kaldi speech recognition client
 		if (data.audioData != "") {
 			cout << "Getting asr client...\t";
 			try {
@@ -68,6 +68,16 @@ public:
 			}
 			// asr = new AsrServiceData(sd);
 			cout << "AsrServiceData object constructed" << endl;
+
+      cout << "Getting audio client...\t";
+      try {
+        audio = new AudioServiceData(assignService("AUDIO"));
+      }catch (AssignmentFailedException exc) {
+        cout << exc.err << endl;
+        return;
+      }
+      // audio = new AudioServiceData(sd);
+      cout << "AudioServiceData object constructed" << endl;
 		}
 		//---- Image matching client
 		if (data.imgData != "") {
@@ -101,14 +111,19 @@ public:
 		}
 
 		//---- Run pipeline ----//
+    std::string audioRetVal = "";
 		std::string asrRetVal = "";
 		std::string immRetVal = "";
 		std::string question = "";
 		if ((data.audioData != "") && (data.imgData != ""))
 		{
 			cout << "Starting IMM-ASR-QA pipeline..." << endl;
+      audio->transport->open();
+      audio->client.audio_conversion(audioRetVal,binary_audio);
+      audio->transport->close();
+
 			asr->transport->open();
-			asr->client.kaldi_asr(asrRetVal, binary_audio);
+			asr->client.kaldi_asr(asrRetVal, audioRetVal);
 			asr->transport->close();
 
 			imm->transport->open();
@@ -124,8 +139,12 @@ public:
 		else if (data.audioData != "")
 		{
 			cout << "Starting ASR-QA pipeline..." << endl;
-			asr->transport->open();
-			asr->client.kaldi_asr(asrRetVal, binary_audio);
+			audio->transport->open();
+      audio->client.audio_conversion(audioRetVal,binary_audio);
+      audio->transport->close();
+
+      asr->transport->open();
+			asr->client.kaldi_asr(asrRetVal, audioRetVal);
 			asr->transport->close();
 
 			qa->transport->open();

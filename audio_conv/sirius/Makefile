@@ -11,10 +11,10 @@ GEN_DIR = ./gen-cpp
 COMMON_DIR =../common
 
 OBJECTS = $(patsubst %.cpp,%.o,$(wildcard $(COMMON_DIR)/*.cpp))
+CMDOBJECT_SERVER = $(CC_DIR)/CommandCenter.o \
+									 $(CC_DIR)/commandcenter_types.o
 
-
-OBJECTS_CLIENT =  $(OBJECTS) $(GEN_DIR)/AudioService.o ACClient.o
-OBJECTS_SERVER  = $(OBJECTS) $(GEN_DIR)/AudioService.o ACDaemon.o
+OBJECTS_SERVER  = $(CMDOBJECT_SERVER) $(OBJECTS) $(GEN_DIR)/AudioService.o ACDaemon.o
 
 
 FFMPEG_LIBS= libavdevice		\
@@ -32,23 +32,19 @@ LIBS	= $(shell pkg-config --libs $(FFMPEG_LIBS))
 LIBS	+= -lthrift -lm
 
 
-all: thrift	$(TARGET_SERVER) $(TARGET_CLIENT) 
+all: thrift	$(TARGET_SERVER)  
 
 thrift:
 	thrift --gen cpp audio.thrift 
 
 $(TARGET_SERVER):	$(OBJECTS_SERVER) 
-	$(CXX) $(CXXFLAGS) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LIBS)
-
-$(TARGET_CLIENT):	$(OBJECTS_CLIENT) 
-	$(CXX) $(CXXFLAGS) $(OBJECTS_CLIENT) -o $(TARGET_CLIENT) $(LIBS)
-
+	$(CXX) $(CXXFLAGS) -I$(CC_DIR) $(OBJECTS_SERVER) -o $(TARGET_SERVER) $(LIBS)
 
 %.o:	%.cpp
-	$(CXX) -I$(GEN_DIR) -I$(COMMON_DIR) -c $(CXXFLAGS) $< -o $@
+	$(CXX) -I$(GEN_DIR) -I$(CC_DIR)  -I$(COMMON_DIR) -c $(CXXFLAGS) $< -o $@
 
 clean: 
-	rm -rf  gen-cpp/ $(TARGET_SERVER) $(TARGET_CLIENT) input* *.o *.wav *~ .*.swp $(COMMON_DIR)/*.o 
+	rm -rf  gen-cpp/ $(TARGET_SERVER) $(TARGET_CLIENT) input*  *.o *.wav *~ .*.swp $(COMMON_DIR)/*.o 
 
 
 .PHONY: all
