@@ -1,2 +1,2 @@
 # Set classpaths for java programs in clarityeco
-export thrift=~/thrift-0.9.2
+export thrift=~/Downloads/thrift-0.9.2
